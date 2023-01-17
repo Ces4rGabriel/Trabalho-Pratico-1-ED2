@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define ITENSPAGINA 100
 #define MAXTABELA 100
@@ -11,7 +13,7 @@ typedef struct{
 typedef struct{
     int chave;
     long dado1;
-    char dado2[5000] 
+    char dado2[5000]; 
 }tipoitem;
 
 //pesquisa binaria recursiva
@@ -36,8 +38,7 @@ int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq){
     int i, quantitens;
     long desloc;
     
-    
-    int i = 0;
+    i = 0;
 
     //procura pela pag
     while(i < MAXTABELA && tabela[i].chave < item->chave) i++;
@@ -51,16 +52,18 @@ int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq){
             quantitens = ITENSPAGINA;
         else {
             fseek(arq, 0, SEEK_END);
-            quantitens = (ftell(arq)/sizeof(tipoitem)) % ITENSPAGINA;
+            quantitens = (ftell(arq) / sizeof(tipoitem)) % ITENSPAGINA;
+            if (quantitens == 0)
+                quantitens = ITENSPAGINA;
         }
 
         // ler a pagina
-        desloc = (i-1) * ITENSPAGINA * sizeof(tipoitem);
-        fseek(arq, desloc, SEEK_SET);
-        fread(&pagina, sizeof(tipoitem), quantitens, arq);
+        desloc = (i - 1) * ITENSPAGINA * sizeof(tipoitem);
+        fseek(arq, desloc, SEEK_SET); //indo pro local do arquivo onde começa a pagina desejada
+        fread(&pagina, sizeof(tipoitem), quantitens, arq); //ler a pagina toda
 
-        //pesquisa binaria na pagina
-        if(pesquisaBinaria(pagina, item->chave, 0, quantitens-1) != 0)
+        // pesquisa binaria na pagina
+        if (pesquisaBinaria(pagina, item->chave, 0, quantitens - 1) != 0)
             return 1;
         else
             return 0;
@@ -72,17 +75,33 @@ int main(){
     tipoindice tabela[MAXTABELA];
     FILE *arq;
     tipoitem x[ITENSPAGINA];
+    tipoitem item;
     int cont;
 
-    if(arq = fopen("arq.bin", "rb") == NULL){
+    //abrir o arquivo
+    if((arq = fopen("arq.bin", "rb")) == NULL){
         printf("Erro\n");
         exit(1);
     }
 
+    //criar a tabela de indices
     cont = 0;
     //ler de 100 em 100 registros do arquivo
     while(fread(x, sizeof(tipoitem), ITENSPAGINA, arq) == 100){
-        tabela[cont].chave = x[0].chave;
         cont++;
+        tabela[cont].chave = x[0].chave;  
     }
+
+    printf("Digite a chave a ser pesquisada: ");
+
+    scanf("%d", &item.chave);
+
+    //pesquisar
+    if(pesquisa(tabela, cont, &item, arq))
+        printf("Encontrado o item de chave %d registro1: %ld\n", item.chave, item.dado1);
+    else
+        printf("Não encontrado\n");
+    
+    fclose(arq);
+    return 0;
 }

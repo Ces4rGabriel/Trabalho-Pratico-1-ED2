@@ -87,7 +87,7 @@ int main(){
     //criar a tabela de indices
     cont = 0;
     //ler de 100 em 100 registros do arquivo
-    while(fread(x, sizeof(tipoitem), ITENSPAGINA, arq) == 100){
+    while(fread(x, sizeof(tipoitem), ITENSPAGINA, arq) > 0){
         cont++;
         tabela[cont].chave = x[0].chave;  
     }

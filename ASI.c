@@ -13,7 +13,7 @@ typedef struct{
 typedef struct{
     int chave;
     long dado1;
-    char dado2[5000]; 
+    char dado2[50]; 
 }tipoitem;
 
 //pesquisa binaria recursiva
@@ -39,9 +39,8 @@ int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq){
     long desloc;
     
     i = 0;
-
     //procura pela pag
-    while(i < MAXTABELA && tabela[i].chave < item->chave) i++;
+    while(i < tam && tabela[i].chave <= item->chave) i++;
 
     //se não encontrou
     if(i == 0)
@@ -62,16 +61,27 @@ int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq){
         fseek(arq, desloc, SEEK_SET); //indo pro local do arquivo onde começa a pagina desejada
         fread(&pagina, sizeof(tipoitem), quantitens, arq); //ler a pagina toda
 
+
+        //pesquisa sequencial
+        for (i=0; i < quantitens; i++)
+            if (pagina[i].chave == item->chave) {
+                *item = pagina[i];
+                return 1;
+        }
+        return 0;
+        
         // pesquisa binaria na pagina
+        /*
         if (pesquisaBinaria(pagina, item->chave, 0, quantitens - 1) != 0)
             return 1;
         else
             return 0;
+            */
     }
 
 }
 
-int main(){
+int main(){    
     tipoindice tabela[MAXTABELA];
     FILE *arq;
     tipoitem x[ITENSPAGINA];
@@ -83,22 +93,26 @@ int main(){
         printf("Erro\n");
         exit(1);
     }
-
     //criar a tabela de indices
     cont = 0;
     //ler de 100 em 100 registros do arquivo
     while(fread(x, sizeof(tipoitem), ITENSPAGINA, arq) > 0){
+        tabela[cont].chave = x[0].chave; 
         cont++;
-        tabela[cont].chave = x[0].chave;  
     }
+    printf("cont = %d\n", cont);
 
+    //imprimir tabela
+    for(int i = 0; i < cont; i++){
+        printf("Tabela[%d]: %d\n", i, tabela[i].chave);
+    }
     printf("Digite a chave a ser pesquisada: ");
 
     scanf("%d", &item.chave);
 
     //pesquisar
     if(pesquisa(tabela, cont, &item, arq))
-        printf("Encontrado o item de chave %d registro1: %ld\n", item.chave, item.dado1);
+        printf("Encontrado o item de chave %d registro_1: %ld registro_2: %s\n", item.chave, item.dado1,item.dado2);
     else
         printf("Não encontrado\n");
     

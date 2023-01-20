@@ -12,7 +12,7 @@ typedef struct{
     char dado2[50]; 
 }registros;
 
-void gerador(int qtd);
+void gerador(int, int );
 
 
 #endif

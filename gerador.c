@@ -1,11 +1,18 @@
 #include "gerador.h"
 
 
-void gerador(int qtd){
+void gerador(int qtd, int situacao){
     FILE *arq;
     int i;
     registros item;
     srand(time(NULL));
+
+    switch (situacao)
+    {
+    case 1:
+        printf("Gerando arquivo ordenado\n");
+        break;
+    }
 
     arq = fopen("arq.bin", "wb");
     item.chave = 0;

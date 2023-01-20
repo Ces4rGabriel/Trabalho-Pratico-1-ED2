@@ -19,8 +19,11 @@ typedef struct{
 
 
 
-int pesquisaBinaria(tipoitem x[], tipoitem *item, int esq, int dir);
+int pesquisaBinaria(tipoitem [], tipoitem *, int , int );
 
-int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq);
+int pesquisa(tipoindice [], int , tipoitem* , FILE *);
+
+void psi_main(int);
+
 
 #endif

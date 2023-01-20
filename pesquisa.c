@@ -3,6 +3,45 @@
 #include <string.h>
 #include "pesquisa.h"
 
+void psi_main(int chave){
+    tipoindice tabela[MAXTABELA];
+    FILE *arq;
+    tipoitem x[ITENSPAGINA];
+    tipoitem item;
+    int cont;
+    
+    //abrir o arquivo
+    if((arq = fopen("arq.bin", "rb")) == NULL){
+        printf("Erro\n");
+        exit(1);
+    }
+
+    //criar a tabela de indices
+    cont = 0; 
+
+    while(fread(x, sizeof(tipoitem), ITENSPAGINA, arq) > 0){ //itenspagina = 100
+        tabela[cont].chave = x[0].chave; 
+        cont++;
+    }
+    printf("cont = %d\n", cont);
+
+    /*imprimir tabela
+    for(int i = 0; i < cont; i++){
+        printf("Tabela[%d]: %d\n", i, tabela[i].chave);
+    }
+    */
+
+    item.chave = chave;
+    //pesquisar
+    if(pesquisa(tabela, cont, &item, arq))
+        printf("Encontrado o item de chave %d registro_1: %ld registro_2: %s\n", item.chave, item.dado1,item.dado2);
+    else
+        printf("Não encontrado\n");
+    
+    fclose(arq);
+}
+
+
 
 //pesquisa binaria recursiva
 int pesquisaBinaria(tipoitem x[], tipoitem *item, int esq, int dir){

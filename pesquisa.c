@@ -23,7 +23,6 @@ void psi_main(int chave){
         tabela[cont].chave = x[0].chave; 
         cont++;
     }
-    printf("cont = %d\n", cont);
 
     /*imprimir tabela
     for(int i = 0; i < cont; i++){
@@ -34,9 +33,9 @@ void psi_main(int chave){
     item.chave = chave;
     //pesquisar
     if(pesquisa(tabela, cont, &item, arq))
-        printf("Encontrado o item de chave %d registro_1: %ld registro_2: %s\n", item.chave, item.dado1,item.dado2);
+        printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     else
-        printf("Não encontrado\n");
+        printf("\nNão encontrado\n");
     
     fclose(arq);
 }

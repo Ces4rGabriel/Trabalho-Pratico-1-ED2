@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "pesquisa.h"
 
 void psi_main(int chave){
@@ -32,11 +33,15 @@ void psi_main(int chave){
 
     item.chave = chave;
     //pesquisar
+    clock_t inicio = clock();
     if(pesquisa(tabela, cont, &item, arq))
         printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     else
         printf("\nNão encontrado\n");
-    
+    clock_t fim = clock();
+    double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC;
+    printf("\nTempo de execução da função Pesquisa Sequencial Indexada: %f\n", tempo);
+
     fclose(arq);
 }
 

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pesquisa.h"
-#include "gerador.h"
+#include "gerador/gerador.h"
 
 int main(int argc, char *argv[]){    
     int metodo = atoi(argv[1]);

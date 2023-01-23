@@ -34,12 +34,14 @@ void psi_main(int chave){
     item.chave = chave;
     //pesquisar
     clock_t inicio = clock();
+
     if(pesquisa(tabela, cont, &item, arq))
         printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     else
         printf("\nNão encontrado\n");
+    
     clock_t fim = clock();
-    double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC;
+    double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
     printf("\nTempo de execução da função Pesquisa Sequencial Indexada: %f\n", tempo);
 
     fclose(arq);
@@ -55,7 +57,6 @@ int pesquisaBinaria(tipoitem x[], tipoitem *item, int esq, int dir){
             *item = x[meio];
             return meio;
         }
-
         if(x[meio].chave > item->chave)
             return pesquisaBinaria(x, item, esq, meio - 1);
 
@@ -102,4 +103,34 @@ int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq){
 
     }
 
+}
+
+int verifica(int argc, int metodo, int situacao){
+    //verifica o numero de argumentos
+    int x = 0;
+    if (argc < 5){
+        printf("Numero de argumentos invalido.\n");
+        x++;
+    }
+    
+    //verifica a situação
+    if (situacao < 1 && situacao > 3){
+        printf("Situação inválida.\n");
+    }
+
+    //verifica o metodo
+    if(metodo < 1 && metodo > 4) {
+        printf("Metodo inválido\n");
+        x++;
+    }
+
+    //verifica se é possivel fazer a pesquisa sequencial indexada
+    if(metodo == 1 && situacao != 1){
+        printf("Este metodo nao suporta a situacao escolhida.\n");
+        x++;
+    }
+
+    //se tudo estiver ok
+    if (x == 0) return 1;
+    else return 0;
 }

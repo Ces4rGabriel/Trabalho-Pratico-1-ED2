@@ -14,8 +14,8 @@ typedef struct{
     char dado2[50]; 
 }tipoitem;
 
-#define ITENSPAGINA 100
-#define MAXTABELA 100
+#define ITENSPAGINA 1000
+#define MAXTABELA 2000
 
 
 
@@ -24,6 +24,8 @@ int pesquisaBinaria(tipoitem [], tipoitem *, int , int );
 int pesquisa(tipoindice [], int , tipoitem* , FILE *);
 
 void psi_main(int);
+
+int verifica(int , int , int );
 
 
 #endif

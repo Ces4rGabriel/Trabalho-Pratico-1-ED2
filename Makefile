@@ -1,6 +1,5 @@
-all: main.o pesquisa.o gerador.o
-	@gcc -o exe main.o pesquisa.o
-	@gcc -o gerador gerador.o
+all: main.o pesquisa.o
+	@gcc main.o pesquisa.o -o exe 
 
 main.o: main.c
 	@gcc main.c -c -Wall

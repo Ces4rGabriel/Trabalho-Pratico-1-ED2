@@ -105,14 +105,18 @@ int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq){
 
 }
 
-int verifica(int argc, int metodo, int situacao){
-    //verifica o numero de argumentos
+int verifica(int argc, char *argv[]){
     int x = 0;
+    
+    //verifica o numero de argumentos
     if (argc < 5){
         printf("Numero de argumentos invalido.\n");
-        x++;
+        return 0;
     }
     
+    int metodo = atoi(argv[1]); //1 = PSI, 2 = ARVORE BINARIA, 3 = ARVORE B, 4 = ARVORE B*
+    int situacao = atoi(argv[3]); //1 = ordenado, 2 = inverso, 3 = aleatorio
+
     //verifica a situação
     if (situacao < 1 && situacao > 3){
         printf("Situação inválida.\n");

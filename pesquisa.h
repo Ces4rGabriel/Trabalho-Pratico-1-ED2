@@ -25,7 +25,7 @@ int pesquisa(tipoindice [], int , tipoitem* , FILE *);
 
 void psi_main(int);
 
-int verifica(int , int , int );
+int verifica(int , char *[] );
 
 
 #endif

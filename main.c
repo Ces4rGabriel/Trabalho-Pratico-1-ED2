@@ -4,14 +4,17 @@
 #include "pesquisa.h"
 #include "gerador/gerador.h"
 
-int main(int argc, char *argv[]){    
-    int metodo = atoi(argv[1]); //1 = PSI, 2 = ARVORE BINARIA, 3 = ARVORE B, 4 = ARVORE B*
-    int nRegistros = atoi(argv[2]);
-    int situacao = atoi(argv[3]); //1 = ordenado, 2 = inverso, 3 = aleatorio
-    int chave = atoi(argv[4]);
+int main(int argc, char *argv[]){ 
+    int metodo, nRegistros, situacao, chave;
+    metodo = nRegistros = situacao = chave = 0;
 
     //verificar se os parametros estão corretos
-    if (verifica(argc, metodo, situacao)==0) return 0;
+    if (verifica(argc, argv)==0) return 0;  
+    
+    metodo = atoi(argv[1]); //1 = PSI, 2 = ARVORE BINARIA, 3 = ARVORE B, 4 = ARVORE B*
+    nRegistros = atoi(argv[2]);
+    situacao = atoi(argv[3]); //1 = ordenado, 2 = inverso, 3 = aleatorio
+    chave = atoi(argv[4]);
 
     //evocar o gerador
     gerador(nRegistros, situacao);

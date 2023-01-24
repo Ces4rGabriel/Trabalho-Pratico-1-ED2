@@ -1,2 +1,2 @@
 all:
-	@gcc main.c pesquisa.c gerador/gerador.c -o teste -Wall
+	@gcc main.c pesquisa.c arv_B.c gerador/gerador.c -o teste -Wall

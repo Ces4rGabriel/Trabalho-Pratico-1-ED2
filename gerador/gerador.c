@@ -17,7 +17,7 @@ void gerador(int qtd, int situacao){
 
 void crescente(int qtd){
     FILE *arq;
-    registros item;
+    Registros item;
     srand(time(NULL));
 
     arq = fopen("arq.bin", "wb");
@@ -33,14 +33,14 @@ void crescente(int qtd){
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[tam_str - 1] = '\0';
-        fwrite(&item, sizeof(registros), 1, arq);
+        fwrite(&item, sizeof(Registros), 1, arq);
     }
     fclose(arq);
 }
 
 void descrescente(int qtd){
     FILE *arq;
-    registros item;
+    Registros item;
     srand(time(NULL));
 
     arq = fopen("arq.bin", "wb");
@@ -55,7 +55,7 @@ void descrescente(int qtd){
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[tam_str - 1] = '\0';
-        fwrite(&item, sizeof(registros), 1, arq);
+        fwrite(&item, sizeof(Registros), 1, arq);
     }
     fclose(arq);
 }

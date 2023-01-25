@@ -11,12 +11,13 @@ typedef struct{
     int chave;
     long dado1;
     char dado2[50]; 
-}registros;
+}Registros;
 
 void gerador(int, int);
 
 void crescente(int);
 
 void descrescente(int);
+
 
 #endif

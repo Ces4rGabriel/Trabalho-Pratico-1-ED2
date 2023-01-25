@@ -23,7 +23,7 @@ int pesquisaBinaria(tipoitem [], tipoitem *, int , int );
 
 int pesquisa(tipoindice [], int , tipoitem* , FILE *);
 
-void psi_main(int);
+void psi_main(int,FILE*);
 
 int verifica(int , char *[] );
 

@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pesquisa.h"
+#include "arv_B.h"
 #include "gerador/gerador.h"
 
 int main(int argc, char *argv[]){ 
+    FILE *arq;
     int metodo, nRegistros, situacao, chave;
     metodo = nRegistros = situacao = chave = 0;
 
@@ -18,12 +20,22 @@ int main(int argc, char *argv[]){
 
     //evocar o gerador
     gerador(nRegistros, situacao);
+
+    //abrir o arquivo
+    if((arq = fopen("arq.bin", "rb")) == NULL){
+        printf("Erro\n");
+        exit(1);
+    }
+
     switch (metodo)
     {
     case 1:
-        psi_main(chave);
+        psi_main(chave, arq);
+        break;
+    case 3:
+        arvB_main(chave, arq);
         break;
     }
-    
+    fclose(arq);
     return 0;
 }

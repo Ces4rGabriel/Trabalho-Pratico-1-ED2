@@ -4,34 +4,22 @@
 #include <time.h>
 #include "pesquisa.h"
 
-void psi_main(int chave){
+void psi_main(int chave, FILE* arq){
     tipoindice tabela[MAXTABELA];
-    FILE *arq;
     tipoitem x[ITENSPAGINA];
     tipoitem item;
     int cont;
     
-    //abrir o arquivo
-    if((arq = fopen("arq.bin", "rb")) == NULL){
-        printf("Erro\n");
-        exit(1);
-    }
+
 
     //criar a tabela de indices
     cont = 0; 
-
     while(fread(x, sizeof(tipoitem), ITENSPAGINA, arq) > 0){ //itenspagina = 100
         tabela[cont].chave = x[0].chave; 
         cont++;
     }
 
-    /*imprimir tabela
-    for(int i = 0; i < cont; i++){
-        printf("Tabela[%d]: %d\n", i, tabela[i].chave);
-    }
-    */
-
-    item.chave = chave;
+    item.chave = chave; //chave a ser pesquisada
     //pesquisar
     clock_t inicio = clock();
 
@@ -44,7 +32,6 @@ void psi_main(int chave){
     double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
     printf("\nTempo de execução da função Pesquisa Sequencial Indexada: %f\n", tempo);
 
-    fclose(arq);
 }
 
 

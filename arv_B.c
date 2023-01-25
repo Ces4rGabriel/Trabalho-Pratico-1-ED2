@@ -1,15 +1,26 @@
 #include "arv_B.h"
 
-int main(){
+void arvB_main(int chave, FILE *arq){
     TipoApontador arvore = NULL;
-    TipoRegistro reg;
-    reg.chave = 1;
+    TipoRegistro reg, item;
+    item.chave = chave;
+    
+    //inicializar a arvore
     Inicializa(arvore);
-    insere(reg, &arvore);
-    reg.chave = 5;
-    insere(reg, &arvore);
-    imprimir1(arvore);
-    return 0;
+
+    //criar a arvore com os registros do arquivo
+    while(fread(&reg, sizeof(TipoRegistro), 1, arq)){
+        insere(reg, &arvore);
+    }
+
+    //pesquisar a chave
+    if(pesquisaArvB(&item, arvore))
+        printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
+    else
+        printf("\nNao encontrado o item de chave %d\n", item.chave);
+
+    //limpa a memoria alocada
+    limpaArvB(arvore);
 }
 
 //inicializar a arvore
@@ -131,46 +142,44 @@ void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
 }
 
 
-int pesquisa(TipoRegistro *x, TipoApontador ap){
+int pesquisaArvB(TipoRegistro *x, TipoApontador ap){
     long i = 1;
-
     if (ap == NULL){
         return 0;  
     }
-    //pesquisa sequencial para encontrar o intervalo (MUDAR PARA BINARIA!!!!!!!)
+    //pesquisa sequencial para encontrar o intervalo
     while (i < ap->n && x->chave > ap->r[i-1].chave)
         i++;
     if (x->chave == ap->r[i-1].chave){ //verifica se a chave é igual a chave do registro
         *x = ap->r[i-1]; //se for igual, o registro é retornado
-        return 0;
+        return 1;
     }
     if(x->chave < ap->r[i-1].chave)
-        pesquisa(x, ap->p[i-1]);
+        return pesquisaArvB(x, ap->p[i-1]);
     else
-        pesquisa(x, ap->p[i]);
-    return 0;
+        return pesquisaArvB(x, ap->p[i]);
 }
 
-void imprimir1(TipoApontador arv){
+void imprimir(TipoApontador arv){
     int i;
     if(arv == NULL)
         return;
+    //percorre todos os filhos recursivamente
     for(i = 0; i < arv->n; i++){
-        imprimir1(arv->p[i]);
-        printf("%ld ", arv->r[i].chave);
+        imprimir(arv->p[i]);
+        printf("%d %ld %s\n", arv->r[i].chave, arv->r[i].dado1, arv->r[i].dado2);
     }
-    imprimir1(arv->p[i]);
+    //imprime a raiz
+    imprimir(arv->p[i]);
 }
 
-void imprimir2(TipoApontador arv){
-    int i = 0;
-    if(arv == NULL)
+void limpaArvB(TipoApontador ap){
+    long i;
+    if (ap == NULL)
         return;
-
-    while (i <= arv->n){
-        imprimir2(arv->p[i]);
-        if(i != arv->n)
-            printf("%ld ", arv->r[i].chave);
-        i++;
-    }
+    //percorre todos os filhos recursivamente
+    for (i = 0; i < ap->n+1; i++)
+        limpaArvB(ap->p[i]);
+    //libera a memória alocada para a raiz
+    free(ap);
 }

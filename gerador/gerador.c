@@ -59,3 +59,27 @@ void descrescente(int qtd){
     }
     fclose(arq);
 }
+
+void random(int qtd){
+    //criando o arquivo crescente que será embaralhado
+    crescente(qtd);
+
+    FILE* arq;
+    int j, i;
+    arq = fopen("arq.bin", "wb");
+    Registros aux, aux2;
+
+    //fisher yates adaptado
+    for (i = qtd -1; i > 0; i--){
+        j = rand() % (i + 1);
+        fseek(arq, i * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no final do arquivo
+        fread(&aux, sizeof(Registros), 1, arq); //le o ultimo registro e guarda em aux
+        fseek(arq, j * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no registro aleatorio
+        fread(&aux2, sizeof(Registros), 1, arq); //le o registro aleatorio
+        fseek(arq, j * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no registro aleatorio
+        fwrite(&aux, sizeof(Registros), 1, arq); //escreve o ultimo registro no registro aleatorio
+        fseek(arq, i * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no final do arquivo
+        fwrite(&aux2, sizeof(Registros), 1, arq); //escreve o registro aleatorio no final do arquivo
+    }//end for
+    fclose(arq);
+}

@@ -1,6 +1,6 @@
 #include "gerador.h"
 
-int main(){
+void geradorMain(){
     printf("\nGerando crescente ...");
     gerarArquivoCrescente(NUMERODEREGISTROS);
     printf("\nCrescente gerado!");
@@ -13,23 +13,21 @@ int main(){
     gerarArquivoDesordenado(NUMERODEREGISTROS);
     printf("\nDesordenado gerado!");
 
-    FILE* arqCre = fopen("arqCre.bin", "r+b");
-    FILE* arqDec = fopen("arqDec.bin", "r+b");
-    FILE* arqDes = fopen("arqDes.bin", "r+b");
+    FILE* arqCre = fopen("arqCre.bin", "rb");
+    FILE* arqDec = fopen("arqDec.bin", "rb");
+    FILE* arqDes = fopen("arqDes.bin", "rb");
 
-    Registro* itensTeste = malloc(1000 * sizeof(Registro));
+    Registro* itensTeste = malloc(2000 * sizeof(Registro));
 
-    fread(itensTeste, sizeof(Registro), 1000, arqCre);
-    fread(itensTeste, sizeof(Registro), 1000, arqDec);
-    fread(itensTeste, sizeof(Registro), 1000, arqDes);
+    fread(itensTeste, sizeof(Registro), 2000, arqCre);
+    fread(itensTeste, sizeof(Registro), 2000, arqDec);
+    fread(itensTeste, sizeof(Registro), 2000, arqDes);
     
     free(itensTeste);
     fclose(arqCre);
     fclose(arqDec);
     fclose(arqDes);
-
 }
-
 
 void gerarArquivoCrescente(int numeroDeRegistros){
     FILE *arq;
@@ -56,7 +54,7 @@ void gerarArquivoDecrescente(int numeroDeRegistros){
     FILE *arq;
     Registro item;
     srand(time(NULL));
-    
+
     arq = fopen("arqDec.bin", "wb");
     //valores decrescentes
     for(int i = numeroDeRegistros; i >= 0; i--){

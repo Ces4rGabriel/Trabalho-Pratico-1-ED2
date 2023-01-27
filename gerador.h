@@ -7,7 +7,7 @@
 #include <string.h>
 
 #define TAMANHOSTRING 500
-#define NUMERODEREGISTROS 2000000
+#define NUMERODEREGISTROS 2000
 
 typedef struct{
     int chave;

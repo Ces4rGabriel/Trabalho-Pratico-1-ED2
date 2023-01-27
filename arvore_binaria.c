@@ -1,24 +1,15 @@
 #include "arvoreBinaria.h"
 
-int main()
+void buscaBinariaMain()
 {
     pesquisaBinariaMain();
-    return 0;
+    TipoItemBinario itemDesejado = localizaElementoNoArquivo(&arq, chave, &numeroDeAcessos, &numeroDeComparacoes);
 }
 
 void pesquisaBinariaMain()
 {
     FILE* arq;
     FILE* arqAvrEscrita;
-
-    arq = fopen("arqDes.bin","rb");
-    arqAvrEscrita = fopen("arqCreArvBin.bin", "w+b");
-    if(arq == NULL || arqAvrEscrita == NULL)
-        printf("\nErro ao abrir os arquivos");
-    converteArquivoParaBinario(&arq, &arqAvrEscrita);
-    fclose(arq);
-    fclose(arqAvrEscrita);
-
 
     arq = fopen("arqCre.bin","rb");
     arqAvrEscrita = fopen("arqCreArvBin.bin", "w+b");
@@ -28,9 +19,16 @@ void pesquisaBinariaMain()
     fclose(arq);
     fclose(arqAvrEscrita);
 
+    arq = fopen("arqDes.bin","rb");
+    arqAvrEscrita = fopen("arqDesArvBin.bin", "w+b");
+    if(arq == NULL || arqAvrEscrita == NULL)
+        printf("\nErro ao abrir os arquivos");
+    converteArquivoParaBinario(&arq, &arqAvrEscrita);
+    fclose(arq);
+    fclose(arqAvrEscrita);
 
     arq = fopen("arqDec.bin","rb");
-    arqAvrEscrita = fopen("arqCreArvBin.bin", "w+b");
+    arqAvrEscrita = fopen("arqDecArvBin.bin", "w+b");
     if(arq == NULL || arqAvrEscrita == NULL)
         printf("\nErro ao abrir os arquivos");
     converteArquivoParaBinario(&arq, &arqAvrEscrita);
@@ -42,14 +40,14 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita)
 {
 
     TipoItem* itensArquivoOriginal = malloc(1000 * sizeof(TipoItem));
-    TipoItemBinario* itensTeste = malloc(1000 * sizeof(TipoItemBinario));
+    TipoItemBinario* itensTeste = malloc(2000 * sizeof(TipoItemBinario));
     TipoItemBinario itemParaBinario, itemRaizDaArvBinaria;
     int raizAtual;
     int condicional = 1;
     int aux = 0;
 
 
-    for(int i = 0; i < 2000; i++)
+    for(int i = 0; i < NUMERODEREGISTROS/1000; i++)
     {
         fread(itensArquivoOriginal, sizeof(TipoItem), 1000, *arq);
         for(int j = 0; j < 1000; j++)
@@ -58,7 +56,7 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita)
             itemParaBinario.apontadorEsq = -1;
             itemParaBinario.chave = itensArquivoOriginal[j].chave;
             itemParaBinario.dado1 = itensArquivoOriginal[j].dado1;
-            strcpy(itemParaBinario.dado2, itensArquivoOriginal[j].dado2);
+            //strcpy(itemParaBinario.dado2, itensArquivoOriginal[j].dado2);
             if(ftell(*arqAvrEscrita) == 0)
             {
                 fwrite(&itemParaBinario, sizeof(TipoItemBinario), 1, *arqAvrEscrita);
@@ -106,11 +104,19 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita)
             aux++;
             printf("\n%d", aux);
         }
-        fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_SET);
+            fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_SET);
         fread(itensTeste, sizeof(TipoItemBinario), 1000, *arqAvrEscrita);
         fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_END);
+        
     }
+    fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_SET);
+    fread(itensTeste, sizeof(TipoItemBinario), 2000, *arqAvrEscrita);
+    fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_END);
     free(itensArquivoOriginal);
     free(itensTeste);
 }
 
+TipoItemBinario localizaElementoNoArquivo(FILE** arq, int chave, int* numeroDeAcessos, int*numeroDeComparacoes)
+{
+
+}

@@ -3,11 +3,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define TAMANHOSTRING 500
 
 typedef struct{
     int chave;
     long dado1;
-    char dado2[50]; 
+    char dado2[TAMANHOSTRING]; 
     int apontadorEsq;
     int apontadorDir;
 }TipoItemBinario;
@@ -15,11 +19,10 @@ typedef struct{
 typedef struct{
     int chave;
     long dado1;
-    char dado2[50]; 
+    char dado2[TAMANHOSTRING]; 
 }TipoItem;
 
-#define ITENSPAGINA 1000
-#define MAXTABELA 2000
+#define NUMERODEREGISTROS 2000
 
 
 void pesquisaBinariaMain();

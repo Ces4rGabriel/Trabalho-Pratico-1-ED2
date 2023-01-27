@@ -21,9 +21,9 @@ typedef struct{
 
 int pesquisaBinaria(tipoitem [], tipoitem *, int , int );
 
-int pesquisa(tipoindice [], int , tipoitem* , FILE *);
+int pesquisa(tipoindice [], int , tipoitem* , FILE *, int);
 
-void psi_main(int,FILE*);
+void psi_main(int,FILE*, int);
 
 int verifica(int , char *[] );
 

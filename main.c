@@ -3,7 +3,6 @@
 #include <string.h>
 #include "pesquisa.h"
 #include "arv_B.h"
-#include "gerador/gerador.h"
 
 int main(int argc, char *argv[]){ 
     FILE *arq;
@@ -18,22 +17,33 @@ int main(int argc, char *argv[]){
     situacao = atoi(argv[3]); //1 = ordenado, 2 = inverso, 3 = aleatorio
     chave = atoi(argv[4]);
 
-    //evocar o gerador
-    gerador(nRegistros, situacao);
+    //abrindo arquivo
+    switch (situacao)
+    {
+    case 1:
+        arq = fopen("arq_crescente.bin", "rb");
+        break;
+    case 2:
+        arq = fopen("arq_decrescente.bin", "rb");
+        break;
 
-    //abrir o arquivo
-    if((arq = fopen("arq.bin", "rb")) == NULL){
-        printf("Erro\n");
-        exit(1);
+    case 3:
+        //arq = fopen("arq.bin", "rb");
+        break;
+    }
+    if(arq == NULL){
+        printf("Erro ao abrir o arquivo\n");
+        return 0;
     }
 
+    //chamando a função de pesquisa
     switch (metodo)
     {
     case 1:
-        psi_main(chave, arq);
+        psi_main(chave, arq, nRegistros);
         break;
     case 3:
-        arvB_main(chave, arq);
+        arvB_main(chave, arq, nRegistros);
         break;
     }
     fclose(arq);

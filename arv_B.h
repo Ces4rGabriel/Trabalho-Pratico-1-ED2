@@ -21,7 +21,7 @@ typedef struct TipoPagina
     TipoApontador p[2*M + 1];
 }TipoPagina;
 
-void arvB_main(int chave, FILE *arq);
+void arvB_main(int , FILE *, int);
 
 void Inicializa(TipoApontador arvore);
 

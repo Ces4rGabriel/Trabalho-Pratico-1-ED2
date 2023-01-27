@@ -1,15 +1,16 @@
 #include "arv_B.h"
 
-void arvB_main(int chave, FILE *arq){
+void arvB_main(int chave, FILE *arq, int qtd_limite){
     TipoApontador arvore = NULL;
     TipoRegistro reg, item;
     item.chave = chave;
-    
+    int cont = 0;
     //inicializar a arvore
     Inicializa(arvore);
 
-    //criar a arvore com os registros do arquivo
-    while(fread(&reg, sizeof(TipoRegistro), 1, arq)){
+    //criar a arvore com os registros do arquivo e considerando a quantidade limite
+    while(fread(&reg, sizeof(TipoRegistro), 1, arq)&& cont < qtd_limite){
+        cont++;
         insere(reg, &arvore);
     }
 

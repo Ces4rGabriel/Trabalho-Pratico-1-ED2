@@ -1,85 +1,116 @@
 #include "gerador.h"
 
-void gerador(int qtd, int situacao){
+int main(){
+    printf("\nGerando crescente ...");
+    gerarArquivoCrescente(NUMERODEREGISTROS);
+    printf("\nCrescente gerado!");
 
-    switch (situacao)
-    {
-    case 1:
-        printf("\nGerando arquivo com chave ascendente\n");
-        crescente(qtd);
-        break;
-    case 2:
-        printf("\nGerando arquivo com chave descendente\n");
-        descrescente(qtd);
-        break;
-    }
+    printf("\nGerando decrescente ...");
+    gerarArquivoDecrescente(NUMERODEREGISTROS);
+    printf("\nDecrescente gerado!");
+
+    printf("\nGerando desordenado ...");
+    gerarArquivoDesordenado(NUMERODEREGISTROS);
+    printf("\nDesordenado gerado!");
+
+    FILE* arqCre = fopen("arqCre.bin", "r+b");
+    FILE* arqDec = fopen("arqDec.bin", "r+b");
+    FILE* arqDes = fopen("arqDes.bin", "r+b");
+
+    Registro* itensTeste = malloc(1000 * sizeof(Registro));
+
+    fread(itensTeste, sizeof(Registro), 1000, arqCre);
+    fread(itensTeste, sizeof(Registro), 1000, arqDec);
+    fread(itensTeste, sizeof(Registro), 1000, arqDes);
+    
+    free(itensTeste);
+    fclose(arqCre);
+    fclose(arqDec);
+    fclose(arqDes);
+
 }
 
-void crescente(int qtd){
+
+void gerarArquivoCrescente(int numeroDeRegistros){
     FILE *arq;
-    Registros item;
+    Registro item;
     srand(time(NULL));
 
-    arq = fopen("arq.bin", "wb");
-    item.chave = 0;
-    for(int i = 0; i < qtd; i++){
-        item.chave++;
-
-        //dado1 aleatorio
-        item.dado1 = rand()%1000;
-
+    arq = fopen("arqCre.bin", "wb");
+    for(int i = 0; i < numeroDeRegistros; i++){
+        item.chave = i;
+        //dado1 aleatorio, valor numerico
+        item.dado1 = item.chave + 1000;
         //dado2 aleatorio
-        for(int j = 0; j < tam_str - 1; j++){
+        for(int j = 0; j < TAMANHOSTRING - 1; j++){
             item.dado2[j] = rand()%26 + 65;
         }
-        item.dado2[tam_str - 1] = '\0';
-        fwrite(&item, sizeof(Registros), 1, arq);
+        item.dado2[TAMANHOSTRING - 1] = '\0';
+        fwrite(&item, sizeof(Registro), 1, arq);
     }
     fclose(arq);
 }
 
-void descrescente(int qtd){
-    FILE *arq;
-    Registros item;
-    srand(time(NULL));
+void gerarArquivoDecrescente(int numeroDeRegistros){
 
-    arq = fopen("arq.bin", "wb");
-    item.chave = 0;
+    FILE *arq;
+    Registro item;
+    srand(time(NULL));
+    
+    arq = fopen("arqDec.bin", "wb");
     //valores decrescentes
-    for(int i = qtd; i > 0; i--){
-        item.chave++;
+    for(int i = numeroDeRegistros; i >= 0; i--){
+        item.chave = i - 1;
         //dado1 aleatorio
-        item.dado1 = rand()%1000;
+        item.dado1 = item.chave + 1000;
         //dado2 aleatorio
-        for(int j = 0; j < tam_str - 1; j++){
+        for(int j = 0; j < TAMANHOSTRING - 1; j++){
             item.dado2[j] = rand()%26 + 65;
         }
-        item.dado2[tam_str - 1] = '\0';
-        fwrite(&item, sizeof(Registros), 1, arq);
+        item.dado2[TAMANHOSTRING - 1] = '\0';
+        fwrite(&item, sizeof(Registro), 1, arq);
     }
     fclose(arq);
 }
 
-void random(int qtd){
-    //criando o arquivo crescente que será embaralhado
-    crescente(qtd);
 
-    FILE* arq;
-    int j, i;
-    arq = fopen("arq.bin", "wb");
-    Registros aux, aux2;
+void gerarArquivoDesordenado(int numeroDeRegistros){
 
-    //fisher yates adaptado
-    for (i = qtd -1; i > 0; i--){
-        j = rand() % (i + 1);
-        fseek(arq, i * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no final do arquivo
-        fread(&aux, sizeof(Registros), 1, arq); //le o ultimo registro e guarda em aux
-        fseek(arq, j * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no registro aleatorio
-        fread(&aux2, sizeof(Registros), 1, arq); //le o registro aleatorio
-        fseek(arq, j * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no registro aleatorio
-        fwrite(&aux, sizeof(Registros), 1, arq); //escreve o ultimo registro no registro aleatorio
-        fseek(arq, i * sizeof(Registros), SEEK_SET); //posiciona o ponteiro no final do arquivo
-        fwrite(&aux2, sizeof(Registros), 1, arq); //escreve o registro aleatorio no final do arquivo
-    }//end for
+    FILE* arq; 
+    Registro item;
+    int* chaves = malloc(numeroDeRegistros * sizeof(int));
+
+    srand(time(NULL));
+
+    for(int i = 0; i < numeroDeRegistros; i++){
+        chaves[i] = i;
+    }
+
+    for(int k = 0; k < 1000; k++){
+        for (int i = numeroDeRegistros - 1; i > 0; i--) {
+            int j = rand() % (i + 1);
+            int temp = chaves[i];
+            chaves[i] = chaves[j];
+            chaves[j] = temp;
+        }
+        printf("\n%d", k);
+    }
+
+    for(int i = 0; i < numeroDeRegistros; i++){
+        if(chaves[i] < 100){
+            printf("\n%d   ,   %d", chaves[i], i);
+        }
+    }
+
+    arq = fopen("arqDes.bin", "wb");
+    for(int i = 0; i < numeroDeRegistros; i++){
+        item.chave = chaves[i];
+        item.dado1 = item.chave + 1000;
+        for(int j = 0; j < TAMANHOSTRING - 1; j++){
+            item.dado2[j] = rand()%26 + 65;
+        }
+        item.dado2[TAMANHOSTRING - 1] = '\0';
+        fwrite(&item, sizeof(Registro), 1, arq);
+    }
     fclose(arq);
 }

@@ -4,16 +4,17 @@
 #include <time.h>
 #include "pesquisa.h"
 
-void psi_main(int chave, FILE* arq, int qtd_limite){
-    tipoindice tabela[MAXTABELA];
-    tipoitem x[ITENSPAGINA];
-    tipoitem item;
-    int cont;
+void pesSeqInd(int chave, FILE* arq, int qtd_limite){
+    TipoIndice tabela[MAXTABELA];
+    TipoItem x[ITENSPAGINA];
+    TipoItem item;
+    int cont, cont_limite;
     
     //criar a tabela de indices
     cont = 0; 
-    while(fread(x, sizeof(tipoitem), ITENSPAGINA, arq) > 0){ //itenspagina = 1000
+    while(fread(x, sizeof(TipoItem), ITENSPAGINA, arq) > 0 && cont_limite < qtd_limite){ //itenspagina = 1000
         tabela[cont].chave = x[0].chave; 
+        cont_limite += ITENSPAGINA;
         cont++;
     }
 
@@ -35,7 +36,7 @@ void psi_main(int chave, FILE* arq, int qtd_limite){
 
 
 //pesquisa binaria recursiva
-int pesquisaBinaria(tipoitem x[], tipoitem *item, int esq, int dir){
+int pesquisaBinaria(TipoItem x[], TipoItem *item, int esq, int dir){
     if(dir >= esq){
         int meio = esq + (dir - esq) / 2;
         if(x[meio].chave == item->chave){
@@ -52,8 +53,8 @@ int pesquisaBinaria(tipoitem x[], tipoitem *item, int esq, int dir){
 
 
 //PESQUISA POR ACESSO SEQUENCIAL INDEXADO
-int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq, int qtd_limite){
-    tipoitem pagina[ITENSPAGINA];
+int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_limite){
+    TipoItem pagina[ITENSPAGINA];
     int i, quantitens;
     long desloc;
     
@@ -76,9 +77,9 @@ int pesquisa(tipoindice tabela[], int tam, tipoitem* item, FILE *arq, int qtd_li
         }
 
         // ler a pagina
-        desloc = (i - 1) * ITENSPAGINA * sizeof(tipoitem);
+        desloc = (i - 1) * ITENSPAGINA * sizeof(TipoItem);
         fseek(arq, desloc, SEEK_SET); //indo pro local do arquivo onde começa a pagina desejada
-        fread(&pagina, sizeof(tipoitem), quantitens, arq); //ler a pagina toda
+        fread(&pagina, sizeof(TipoItem), quantitens, arq); //ler a pagina toda
 
         // pesquisa binaria na pagina
         if (pesquisaBinaria(pagina, item, 0, quantitens - 1) != -1)

@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
     switch (metodo)
     {
     case 1:
-        psi_main(chave, arq, nRegistros);
+        pesSeqInd(chave, arq, nRegistros);
         break;
     case 3:
         arvB_main(chave, arq, nRegistros);

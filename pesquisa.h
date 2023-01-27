@@ -7,25 +7,25 @@
 
 typedef struct{
     int chave;
-}tipoindice;
+}TipoIndice;
 
 
 typedef struct{
     int chave;
     long dado1;
     char dado2[50]; 
-}tipoitem;
+}TipoItem;
 
 #define ITENSPAGINA 1000
 #define MAXTABELA 2000
 
 
 
-int pesquisaBinaria(tipoitem [], tipoitem *, int , int );
+int pesquisaBinaria(TipoItem [], TipoItem *, int , int );
 
-int pesquisa(tipoindice [], int , tipoitem* , FILE *, int);
+int pesquisa(TipoIndice [], int , TipoItem* , FILE *, int);
 
-void psi_main(int,FILE*, int);
+void pesSeqInd(int,FILE*, int);
 
 int verifica(int , char *[] );
 

@@ -22,7 +22,7 @@ typedef struct TipoPagina {
     union {
         struct {
             int ni;
-            TipoChave ri[MM2];
+            TipoRegistro ri[MM2];
             TipoApontador pi[MM2 + 1];
         }U0;
         struct {
@@ -47,7 +47,7 @@ void arvB_main(int chave, FILE *arq, int qtd_limite){
     }
 
     //pesquisar a chave
-    if(pesquisaArvB(&item, arvore))
+    if(pesquisa_BS(&item, arvore))
         printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     else
         printf("\nNao encontrado o item de chave %d\n", item.chave);
@@ -58,15 +58,15 @@ void Inicializa(TipoApontador arvore){
     arvore = NULL;
 }
 
-void pesquisa_B(TipoRegistro *x, TipoApontador *Ap){
+void pesquisa_BS(TipoRegistro *x, TipoApontador *Ap){
     int i;
     TipoApontador Pag;
     Pag = *Ap;
     if((*Ap)->Pt == Interna){
         i = 1;
-        while(i < Pag->UU.U0.ni && x->chave > Pag->UU.U0.ri[i-1])
+        while(i < Pag->UU.U0.ni && x->chave > Pag->UU.U0.ri[i-1].chave)
             i++;
-        if(x->chave == Pag->UU.U0.ri[i-1])
+        if(x->chave == Pag->UU.U0.ri[i-1].chave)
         pesquisa(x, &Pag->UU.U0.pi[i-1]);
         else pesquisa(x, &Pag->UU.U0.pi[i-1]);
         return;
@@ -101,7 +101,7 @@ void bstar_Insere(TipoRegistro reg, TipoApontador *Ap) {
         else {
             ApTemp->Pt = Interna;
             ApTemp->UU.U0.ni = 1;
-            ApTemp->UU.U0.ri[0] = RegRetorno.chave; //mudou (tirou o .chave)
+            ApTemp->UU.U0.ri[0].chave = RegRetorno.chave; //mudou (tirou o .chave)
             ApTemp->UU.U0.pi[1] = ApRetorno;
             ApTemp->UU.U0.pi[0] = *Ap;
         }
@@ -122,10 +122,10 @@ void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro 
         return;
     }
 
-    while (i < Ap->UU.U0.ni && reg.chave > Ap->UU.U0.ri[i - 1]) i++;
+    while (i < Ap->UU.U0.ni && reg.chave > Ap->UU.U0.ri[i - 1].chave) i++;
 
     // Isso não vai acontecer por causa do conteúdo ser gerado sem repetição
-    if (reg.chave == Ap->UU.U0.ri[i - 1]) {
+    if (reg.chave == Ap->UU.U0.ri[i - 1].chave) {
         // printf("ERRO: Registro já existente\n");
         // teste // bstar_InsereNaPagina(Ap, *RegRetorno, *ApRetorno);
         *Cresceu = 0;
@@ -133,7 +133,7 @@ void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro 
         return;
     }
 
-    if (reg.chave < Ap->UU.U0.ri[i - 1]) i--;
+    if (reg.chave < Ap->UU.U0.ri[i - 1].chave) i--;
 	
     bstar_Ins(reg, Ap->UU.U0.pi[i], Cresceu, RegRetorno, ApRetorno);
 
@@ -153,7 +153,7 @@ void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro 
     ApTemp->UU.U0.pi[0] = NULL;
 
     if (i < MM + 1) {
-        bstar_InsereNaPagina(ApTemp, Ap->UU.U0.ri[MM2 - 1].chave, Ap->UU.U0.pi[MM]);
+        bstar_InsereNaPagina(ApTemp, Ap->UU.U0.ri[MM2 - 1], Ap->UU.U0.pi[MM]);
         printf("Registro %d adicionada na página dividida.\n", RegRetorno->chave);
         Ap->UU.U0.ni--;
         bstar_InsereNaPagina(Ap, *RegRetorno, *ApRetorno);
@@ -161,11 +161,11 @@ void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro 
         bstar_InsereNaPagina(ApTemp, *RegRetorno, *ApRetorno);
 
     for (j = MM + 2; j <= MM2; j++) 
-		bstar_InsereNaPagina(ApTemp, Ap->UU.U0.ri[j - 1].chave, Ap->UU.U0.pi[j]);
+		bstar_InsereNaPagina(ApTemp, Ap->UU.U0.ri[j - 1], Ap->UU.U0.pi[j]);
 
     Ap->UU.U1.ne = MM;
     ApTemp->UU.U0.pi[0] = Ap->UU.U0.pi[MM + 1];
-    (*RegRetorno).chave = Ap->UU.U0.ri[MM];
+    (*RegRetorno).chave = Ap->UU.U0.ri[MM].chave;
     *ApRetorno = ApTemp;
 }
 

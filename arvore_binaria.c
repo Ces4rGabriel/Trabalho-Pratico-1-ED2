@@ -182,24 +182,18 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTer
 TipoItemBinario localizaElementoNoArquivo(FILE** arq, TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
 {
     TipoItemBinario itemObtido;
-    TipoItemBinario *itensPagina = malloc(1000 * sizeof(TipoItemBinario));
-
+    TipoItemBinario itemRaiz;
+    
+    int posicao = 0;
     int condicional = 1;
 
     dados->numeroDeAcessos = 0;
     dados->numeroDeComparacoes = 0;
     dados->tempoDecorrido = 0;
 
-    when(condicional)
+    while(condicional)
     {
-        fread(itensPagina, sizeof(TipoItemBinario), 1000, *arq);
-        for(int i = 0; i < 999; i++)
-        {
-            
-        }
-    }   
-
-    free(itensPagina);
-
-
+        fread(&itemRaiz, sizeof(TipoItemBinario), 1, *arq);
+        
+    }  
 }

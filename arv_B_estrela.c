@@ -39,7 +39,7 @@ void arvB_main(int chave, FILE *arq, int qtd_limite){
         cont++;
         bstar_Insere(reg, &arvore);
     }
-
+    bstar_Imprime(arvore);
     //pesquisar a chave
     if(pesquisa_BS(&item, arvore))
         printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
@@ -174,3 +174,21 @@ void escreverValor(TipoApontador *Ap) {
     }
 }
 
+//imprimir chaves e registros da arvore B*
+void bstar_Imprime(TipoApontador Ap) {
+    long i;
+    if (Ap == NULL)
+        return;
+
+    if (Ap->Pt == Interna) {
+        for (i = 0; i < Ap->UU.U0.ni; i++) {
+            bstar_Imprime(Ap->UU.U0.pi[i]);
+            printf("Chave: %d\n", Ap->UU.U0.ri[i].chave);
+        }
+        bstar_Imprime(Ap->UU.U0.pi[i]);
+    }
+    else 
+        for (i = 0; i < Ap->UU.U1.ne; i++) 
+            printf("Chave: %d\n", Ap->UU.U1.re[i].chave);
+        
+}

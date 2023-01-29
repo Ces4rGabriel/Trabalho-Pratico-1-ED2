@@ -6,7 +6,7 @@
 
 #define MM 3
 #define MM2 2*MM
-
+//*
 typedef int TipoChave;
 
 typedef struct TipoRegistro{
@@ -41,5 +41,6 @@ void bstar_Insere(TipoRegistro reg, TipoApontador *Ap);
 void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro *RegRetorno, TipoApontador *ApRetorno);
 void bstar_InsereNaPagina(TipoApontador Ap, TipoRegistro Reg, TipoApontador ApDir);
 void escreverValor(TipoApontador *Ap);
+void bstar_Imprime(TipoApontador Ap);
 
 #endif

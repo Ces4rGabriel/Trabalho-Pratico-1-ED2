@@ -8,9 +8,9 @@ int pesquisa_BS(TipoRegistroBE *x, TipoApontadorBE *Ap){
         i = 1;
         while(i < Pag->UU.U0.ni && x->chave > Pag->UU.U0.ri[i-1].chave)
             i++;
-        if(x->chave == Pag->UU.U0.ri[i-1].chave)
+        if(x->chave < Pag->UU.U0.ri[i-1].chave)
             pesquisa_BS(x, &Pag->UU.U0.pi[i-1]);
-        else pesquisa_BS(x, &Pag->UU.U0.pi[i-1]);
+        else pesquisa_BS(x, &Pag->UU.U0.pi[i]);
         return 0;
     }
     i = 1;
@@ -24,7 +24,23 @@ int pesquisa_BS(TipoRegistroBE *x, TipoApontadorBE *Ap){
         return 0;
     }
 }
+/*
+int pesquisa_BS(TipoRegistroBE *x, TipoApontadorBE *Ap) {
+    long i = 1;
+    if (*Ap == NULL) return 0;
 
+    while (i < (*Ap)->UU.U0.ni && x->chave > (*Ap)->UU.U0.ri[i - 1].chave) i++;
+
+    if (x->chave == (*Ap)->UU.U0.ri[i - 1].chave) {
+        *x = (*Ap)->UU.U0.ri[i - 1];
+        return 1;
+    }
+
+    if (x->chave < (*Ap)->UU.U0.ri[i - 1].chave) i--;
+
+    return pesquisa_BS(x, &(*Ap)->UU.U0.pi[i]);
+}
+*/
 void arvBE_main(int chave, FILE *arq, int qtd_limite){
     TipoApontadorBE arvore = NULL;
     TipoRegistroBE reg, item;
@@ -38,13 +54,12 @@ void arvBE_main(int chave, FILE *arq, int qtd_limite){
         bstar_Insere(reg, &arvore);
     }
     bstar_Imprime(arvore);
-    //pesquisar a chave
-    
+    /*
     if(pesquisa_BS(&item, &arvore))
         printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     else
         printf("\nNao encontrado o item de chave %d\n", item.chave);
-
+*/
 }
 
 void InicializaBE(TipoApontadorBE arvore){
@@ -156,7 +171,7 @@ void bstar_InsereNaPagina(TipoApontadorBE Ap, TipoRegistroBE Reg, TipoApontadorB
     Ap->UU.U1.re[k] = Reg;
     Ap->UU.U0.pi[k + 1] = ApDir;
     Ap->UU.U1.ne++;
-    // Ap->PT=Externa;
+    //Ap->Pt=Externa;
     //escreverValor(&Ap);
 }
 
@@ -182,12 +197,12 @@ void bstar_Imprime(TipoApontadorBE Ap) {
     if (Ap->Pt == Interna) {
         for (i = 0; i < Ap->UU.U0.ni; i++) {
             bstar_Imprime(Ap->UU.U0.pi[i]);
-            printf("Chave: %d\n", Ap->UU.U0.ri[i].chave);
+            printf("%d %ld %s Interna\n", Ap->UU.U0.ri[i].chave, Ap->UU.U0.ri[i].dado1, Ap->UU.U0.ri[i].dado2);
         }
         bstar_Imprime(Ap->UU.U0.pi[i]);
     }
     else 
         for (i = 0; i < Ap->UU.U1.ne; i++) 
-            printf("Chave: %d\n", Ap->UU.U1.re[i].chave);
+            printf("%d %ld %s Externa\n", Ap->UU.U1.re[i].chave, Ap->UU.U1.re[i].dado1, Ap->UU.U1.re[i].dado2);
         
 }

@@ -13,7 +13,7 @@ void arvB_main(int chave, FILE *arq, int qtd_limite){
         cont++;
         insere(reg, &arvore);
     }
-
+    imprimir(arvore);
     //pesquisar a chave
     if(pesquisaArvB(&item, arvore))
         printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);

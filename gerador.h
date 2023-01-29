@@ -6,14 +6,16 @@
 #include <time.h>
 #include <string.h>
 
-#define TAMANHOSTRING 500
-#define NUMERODEREGISTROS 2000
+#define TAMANHOSTRING 50
+#define NUMERODEREGISTROS 2000000
 
 typedef struct{
     int chave;
     long dado1;
     char dado2[TAMANHOSTRING]; 
 }Registro;
+
+void geradorMain();
 
 void gerarArquivoCrescente(int);
 

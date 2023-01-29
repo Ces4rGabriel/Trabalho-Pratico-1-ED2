@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include "analise.h"
+#include <time.h>
 
 #define M 10
 
@@ -21,11 +23,11 @@ typedef struct TipoPagina
     TipoApontador p[2*M + 1];
 }TipoPagina;
 
-void arvB_main(int , FILE *, int);
+void arvB_main(int , FILE *, int, Analis *, int pp);
 
 void Inicializa(TipoApontador arvore);
 
-int pesquisaArvB(TipoRegistro *x, TipoApontador ap);
+int pesquisaArvB(TipoRegistro *x, TipoApontador ap, Analis *analise);
 
 void imprimir(TipoApontador arv);
 

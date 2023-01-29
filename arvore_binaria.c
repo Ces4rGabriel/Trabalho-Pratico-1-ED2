@@ -1,42 +1,105 @@
 #include "arvoreBinaria.h"
 
-void buscaBinariaMain()
+int main()
 {
-    pesquisaBinariaMain();
-    TipoItemBinario itemDesejado = localizaElementoNoArquivo(&arq, chave, &numeroDeAcessos, &numeroDeComparacoes);
+    TipoDadosRecolhidos* dados;
+    TipoEntradaTerminal entrada;
+
+    entrada.chaveDesejada = 500;
+    entrada.metodoDePesquisa = 1;
+    entrada.quantidadeDeRegistros = 2000;
+    entrada.situacaoDoArquivo = 1;
+
+    buscaBinariaMain(entrada, dados);
+    return 0;
 }
 
-void pesquisaBinariaMain()
+void buscaBinariaMain(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
+{
+    chamadaConvercao(entrada, dados);
+
+    FILE* arq;
+    TipoItemBinario itemDesejado;
+    switch (entrada.situacaoDoArquivo)
+    {
+    case 1:
+        arq = fopen("arqCreArvBin.bin", "rb");
+        if(arq == NULL)
+            printf("\nErro ao abrir arquivo");
+        itemDesejado = localizaElementoNoArquivo(&arq,  entrada, dados);
+        printf("\n%ld é o seu dado 1", itemDesejado.dado1);
+        break;
+    case 2:
+        arq = fopen("arqCreArvBin.bin", "rb");
+        if(arq == NULL)
+            printf("\nErro ao abrir arquivo");
+        itemDesejado = localizaElementoNoArquivo(&arq,  entrada, dados);
+        printf("\n%ld é o seu dado 1", itemDesejado.dado1);
+        break;
+    case 3:
+        arq = fopen("arqCreArvBin.bin", "rb");
+        if(arq == NULL)
+            printf("\nErro ao abrir arquivo");
+        itemDesejado = localizaElementoNoArquivo(&arq,  entrada, dados);
+        printf("\n%ld é o seu dado 1", itemDesejado.dado1);
+    break;
+    default:
+        break;
+    }
+
+    
+}
+
+void chamadaConvercao(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
 {
     FILE* arq;
     FILE* arqAvrEscrita;
+    int checagem;
 
-    arq = fopen("arqCre.bin","rb");
-    arqAvrEscrita = fopen("arqCreArvBin.bin", "w+b");
-    if(arq == NULL || arqAvrEscrita == NULL)
-        printf("\nErro ao abrir os arquivos");
-    converteArquivoParaBinario(&arq, &arqAvrEscrita);
-    fclose(arq);
-    fclose(arqAvrEscrita);
+    printf("\nDeseja converter arqCre.bin (Arquivo crescente) para um arquivo em forma de arvore binaria (gera o arquivo arqCreArvBin.bin)? \n(1 - sim/0 - não) ");
+    scanf("%d", &checagem);
 
-    arq = fopen("arqDes.bin","rb");
-    arqAvrEscrita = fopen("arqDesArvBin.bin", "w+b");
-    if(arq == NULL || arqAvrEscrita == NULL)
-        printf("\nErro ao abrir os arquivos");
-    converteArquivoParaBinario(&arq, &arqAvrEscrita);
-    fclose(arq);
-    fclose(arqAvrEscrita);
+    if(checagem != 0)
+    {
+        arq = fopen("arqCre.bin","rb");
+        arqAvrEscrita = fopen("arqCreArvBin.bin", "w+b");
+        if(arq == NULL || arqAvrEscrita == NULL)
+            printf("\nErro ao abrir os arquivos");
+        converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dados);
+        fclose(arq);
+        fclose(arqAvrEscrita);
+    }
 
-    arq = fopen("arqDec.bin","rb");
-    arqAvrEscrita = fopen("arqDecArvBin.bin", "w+b");
-    if(arq == NULL || arqAvrEscrita == NULL)
-        printf("\nErro ao abrir os arquivos");
-    converteArquivoParaBinario(&arq, &arqAvrEscrita);
-    fclose(arq);
-    fclose(arqAvrEscrita);
+    printf("\nDeseja converter arqDec.bin (Arquivo decrescente) para um arquivo em forma de arvore binaria (gera o arquivo arqDecArvBin.bin)? \n(1 - sim/0 - não) ");
+    scanf("%d", &checagem);
+
+    if(checagem != 0)
+    {
+        arq = fopen("arqDes.bin","rb");
+        arqAvrEscrita = fopen("arqDesArvBin.bin", "w+b");
+        if(arq == NULL || arqAvrEscrita == NULL)
+            printf("\nErro ao abrir os arquivos");
+        converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dados);
+        fclose(arq);
+        fclose(arqAvrEscrita);
+    }
+
+    printf("\nDeseja converter arqCre.bin (Arquivo desordenado) para um arquivo em forma de arvore binaria (gera o arquivo arqDesArvBin.bin)? \n(1 - sim/0 - não) ");
+    scanf("%d", &checagem);
+
+    if(checagem != 0)
+    {
+        arq = fopen("arqDec.bin","rb");
+        arqAvrEscrita = fopen("arqDecArvBin.bin", "w+b");
+        if(arq == NULL || arqAvrEscrita == NULL)
+            printf("\nErro ao abrir os arquivos");
+        converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dados);
+        fclose(arq);
+        fclose(arqAvrEscrita);
+    }
 }
 
-void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita)
+void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
 {
 
     TipoItem* itensArquivoOriginal = malloc(1000 * sizeof(TipoItem));
@@ -47,7 +110,7 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita)
     int aux = 0;
 
 
-    for(int i = 0; i < NUMERODEREGISTROS/1000; i++)
+    for(int i = 0; i < entrada.quantidadeDeRegistros/1000; i++)
     {
         fread(itensArquivoOriginal, sizeof(TipoItem), 1000, *arq);
         for(int j = 0; j < 1000; j++)
@@ -104,7 +167,7 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita)
             aux++;
             printf("\n%d", aux);
         }
-            fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_SET);
+        fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_SET);
         fread(itensTeste, sizeof(TipoItemBinario), 1000, *arqAvrEscrita);
         fseek(*arqAvrEscrita, 0 * sizeof(TipoItemBinario), SEEK_END);
         
@@ -116,7 +179,27 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita)
     free(itensTeste);
 }
 
-TipoItemBinario localizaElementoNoArquivo(FILE** arq, int chave, int* numeroDeAcessos, int*numeroDeComparacoes)
+TipoItemBinario localizaElementoNoArquivo(FILE** arq, TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
 {
+    TipoItemBinario itemObtido;
+    TipoItemBinario *itensPagina = malloc(1000 * sizeof(TipoItemBinario));
+
+    int condicional = 1;
+
+    dados->numeroDeAcessos = 0;
+    dados->numeroDeComparacoes = 0;
+    dados->tempoDecorrido = 0;
+
+    when(condicional)
+    {
+        fread(itensPagina, sizeof(TipoItemBinario), 1000, *arq);
+        for(int i = 0; i < 999; i++)
+        {
+            
+        }
+    }   
+
+    free(itensPagina);
+
 
 }

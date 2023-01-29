@@ -7,8 +7,11 @@
 #include <time.h>
 
 #define TAMANHOSTRING 500
+#define NUMERODEREGISTROS 2000
 
-typedef struct{
+
+typedef struct
+{
     int chave;
     long dado1;
     char dado2[TAMANHOSTRING]; 
@@ -16,17 +19,36 @@ typedef struct{
     int apontadorDir;
 }TipoItemBinario;
 
-typedef struct{
+typedef struct
+{
     int chave;
     long dado1;
     char dado2[TAMANHOSTRING]; 
 }TipoItem;
 
-#define NUMERODEREGISTROS 2000
+typedef struct
+{
+    int numeroDeAcessos;
+    int numeroDeComparacoes;
+    double tempoDecorrido;
+    TipoItem itemRetornado;
+}TipoDadosRecolhidos;
 
+typedef struct
+{
+    int metodoDePesquisa;
+    int quantidadeDeRegistros;
+    int situacaoDoArquivo;
+    int chaveDesejada;
+    int argOpcional;
+}TipoEntradaTerminal;
 
-void pesquisaBinariaMain();
+void buscaBinariaMain(TipoEntradaTerminal, TipoDadosRecolhidos*);
 
-void converteArquivoParaBinario(FILE**, FILE**);
+void chamadaConvercao(TipoEntradaTerminal , TipoDadosRecolhidos* );
+
+void converteArquivoParaBinario(FILE**, FILE**, TipoEntradaTerminal, TipoDadosRecolhidos*);
+
+TipoItemBinario localizaElementoNoArquivo(FILE** , TipoEntradaTerminal, TipoDadosRecolhidos*);
 
 #endif

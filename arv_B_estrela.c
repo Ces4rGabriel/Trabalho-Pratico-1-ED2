@@ -11,7 +11,7 @@ int pesquisa_BS(TipoRegistroBE *x, TipoApontadorBE *Ap){
         if(x->chave == Pag->UU.U0.ri[i-1].chave)
             pesquisa_BS(x, &Pag->UU.U0.pi[i-1]);
         else pesquisa_BS(x, &Pag->UU.U0.pi[i-1]);
-        return ;
+        return 0;
     }
     i = 1;
     while(i < Pag->UU.U1.ne && x->chave > Pag->UU.U1.re[i-1].chave)
@@ -23,7 +23,6 @@ int pesquisa_BS(TipoRegistroBE *x, TipoApontadorBE *Ap){
     else{
         return 0;
     }
-
 }
 
 void arvBE_main(int chave, FILE *arq, int qtd_limite){
@@ -32,8 +31,7 @@ void arvBE_main(int chave, FILE *arq, int qtd_limite){
     item.chave = chave;
     int cont = 0;
     //inicializar a arvore
-    Inicializa(arvore);
-
+    InicializaBE(arvore);
     //criar a arvore com os registros do arquivo e considerando a quantidade limite
     while(fread(&reg, sizeof(TipoRegistroBE), 1, arq)&& cont < qtd_limite){
         cont++;
@@ -41,7 +39,8 @@ void arvBE_main(int chave, FILE *arq, int qtd_limite){
     }
     bstar_Imprime(arvore);
     //pesquisar a chave
-    if(pesquisa_BS(&item, arvore))
+    
+    if(pesquisa_BS(&item, &arvore))
         printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     else
         printf("\nNao encontrado o item de chave %d\n", item.chave);
@@ -112,7 +111,7 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
 
     if (Ap->UU.U0.ni < MM2) { /* Página tem Espaço */
         bstar_InsereNaPagina(Ap, *RegRetorno, *ApRetorno);
-        printf("%s \n\n", Ap->Pt == Interna ? "Interna" : "Externa");
+        //printf("%s \n\n", Ap->Pt == Interna ? "Interna" : "Externa");
         *Cresceu = 0;
         return;
     }
@@ -158,21 +157,21 @@ void bstar_InsereNaPagina(TipoApontadorBE Ap, TipoRegistroBE Reg, TipoApontadorB
     Ap->UU.U0.pi[k + 1] = ApDir;
     Ap->UU.U1.ne++;
     // Ap->PT=Externa;
-    escreverValor(&Ap);
+    //escreverValor(&Ap);
 }
 
-void escreverValor(TipoApontadorBE *Ap) {
+/*void escreverValor(TipoApontadorBE *Ap) {
     printf("PT: %s\n", (*Ap)->Pt == Interna ? "Interna" : "Externa");
     if ((*Ap)->Pt == Interna) {
         for (int i = 0; i < (*Ap)->UU.U0.ni; ++i) {
-            printf("Codigo: %d\n", (*Ap)->UU.U0.ri[i]);
+            printf("Codigo: %d\n", (*Ap)->UU.U0.ri[i].chave);
         }
     } else {
         for (int i = 0; i < (*Ap)->UU.U1.ne; ++i) {
             printf("Codigo: %d\n", (*Ap)->UU.U1.re[i].chave);
         }
     }
-}
+}*/
 
 //imprimir chaves e registros da arvore B*
 void bstar_Imprime(TipoApontadorBE Ap) {

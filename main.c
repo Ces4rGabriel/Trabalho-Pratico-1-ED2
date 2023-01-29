@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
         arvB_main(chave, arq, nRegistros);
         break;
     case 4:
-        //arvBE_main(chave, arq, nRegistros);
+        arvBE_main(chave, arq, nRegistros);
     }
     fclose(arq);
     return 0;

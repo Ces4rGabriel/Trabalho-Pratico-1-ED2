@@ -119,7 +119,7 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTer
             itemParaBinario.apontadorEsq = -1;
             itemParaBinario.chave = itensArquivoOriginal[j].chave;
             itemParaBinario.dado1 = itensArquivoOriginal[j].dado1;
-            //strcpy(itemParaBinario.dado2, itensArquivoOriginal[j].dado2);
+            strcpy(itemParaBinario.dado2, itensArquivoOriginal[j].dado2);
             if(ftell(*arqAvrEscrita) == 0)
             {
                 fwrite(&itemParaBinario, sizeof(TipoItemBinario), 1, *arqAvrEscrita);
@@ -193,7 +193,18 @@ TipoItemBinario localizaElementoNoArquivo(FILE** arq, TipoEntradaTerminal entrad
 
     while(condicional)
     {
+        fseek(*arq, posicao * sizeof(TipoItemBinario), SEEK_SET);
+        dados->numeroDeAcessos++;
         fread(&itemRaiz, sizeof(TipoItemBinario), 1, *arq);
+        dados->numeroDeAcessos++;
+        if(entrada.chaveDesejada >= itemRaiz.chave)
+        {
+            dados->numeroDeComparacoes++;
+            if(itemRaiz.apontadorDir != -1)
+            {
+
+            }
+        }
         
     }  
 }

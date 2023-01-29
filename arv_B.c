@@ -114,7 +114,6 @@ void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRe
     *apRetorno = apTemp;
 
 }
-
 void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
     short naoAchouPosicao;
     int k;
@@ -141,7 +140,6 @@ void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
     ap->n++;
 
 }
-
 
 int pesquisaArvB(TipoRegistro *x, TipoApontador ap){
     long i = 1;

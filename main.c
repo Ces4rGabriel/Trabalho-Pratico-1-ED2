@@ -3,6 +3,7 @@
 #include <string.h>
 #include "pesquisa.h"
 #include "arv_B.h"
+#include "arv_B_estrela.h"
 
 int main(int argc, char *argv[]){ 
     FILE *arq;
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]){
         break;
 
     case 3:
-        //arq = fopen("arq.bin", "rb");
+        arq = fopen("arq.bin", "rb");
         break;
     }
     if(arq == NULL){
@@ -45,6 +46,8 @@ int main(int argc, char *argv[]){
     case 3:
         arvB_main(chave, arq, nRegistros);
         break;
+    case 4:
+        //arvBE_main(chave, arq, nRegistros);
     }
     fclose(arq);
     return 0;

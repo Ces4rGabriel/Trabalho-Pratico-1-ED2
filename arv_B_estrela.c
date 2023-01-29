@@ -1,36 +1,30 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#include "arv_B_estrela.h"
 
-#define MM 3
-#define MM2 2*MM
+int pesquisa_BS(TipoRegistro *x, TipoApontador *Ap){
+    int i;
+    TipoApontador Pag;
+    Pag = *Ap;
+    if((*Ap)->Pt == Interna){
+        i = 1;
+        while(i < Pag->UU.U0.ni && x->chave > Pag->UU.U0.ri[i-1].chave)
+            i++;
+        if(x->chave == Pag->UU.U0.ri[i-1].chave)
+        pesquisa(x, &Pag->UU.U0.pi[i-1]);
+        else pesquisa(x, &Pag->UU.U0.pi[i-1]);
+        return;
+    }
+    i = 1;
+    while(i < Pag->UU.U1.ne && x->chave > Pag->UU.U1.re[i-1].chave)
+        i++;
+    if(x->chave == Pag->UU.U1.re[i-1].chave){
+        *x = Pag->UU.U1.re[i-1];
+        return 1;
+    }
+    else{
+        return 0;
+    }
 
-typedef int TipoChave;
-
-typedef struct TipoRegistro{
-    TipoChave chave;
-    long dado1;
-    char dado2[50]; 
-} TipoRegistro;
-
-typedef enum {Interna, Externa} TipoIntExt;
-
-typedef struct TipoPagina* TipoApontador;
-
-typedef struct TipoPagina {
-    TipoIntExt Pt;
-    union {
-        struct {
-            int ni;
-            TipoRegistro ri[MM2];
-            TipoApontador pi[MM2 + 1];
-        }U0;
-        struct {
-            int ne;
-            TipoRegistro re[MM2];
-        }U1;
-    }UU;
-} TipoPagina;
+}
 
 void arvB_main(int chave, FILE *arq, int qtd_limite){
     TipoApontador arvore = NULL;
@@ -58,30 +52,6 @@ void Inicializa(TipoApontador arvore){
     arvore = NULL;
 }
 
-void pesquisa_BS(TipoRegistro *x, TipoApontador *Ap){
-    int i;
-    TipoApontador Pag;
-    Pag = *Ap;
-    if((*Ap)->Pt == Interna){
-        i = 1;
-        while(i < Pag->UU.U0.ni && x->chave > Pag->UU.U0.ri[i-1].chave)
-            i++;
-        if(x->chave == Pag->UU.U0.ri[i-1].chave)
-        pesquisa(x, &Pag->UU.U0.pi[i-1]);
-        else pesquisa(x, &Pag->UU.U0.pi[i-1]);
-        return;
-    }
-    i = 1;
-    while(i < Pag->UU.U1.ne && x->chave > Pag->UU.U1.re[i-1].chave)
-        i++;
-    if(x->chave == Pag->UU.U1.re[i-1].chave){
-        *x = Pag->UU.U1.re[i-1];
-    }
-    else{
-        printf("Registro nao esta presente na arvore\n");
-    }
-
-}
 void bstar_Insere(TipoRegistro reg, TipoApontador *Ap) {
     short Cresceu;
     TipoRegistro RegRetorno;

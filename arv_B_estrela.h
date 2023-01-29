@@ -7,40 +7,40 @@
 #define MM 3
 #define MM2 2*MM
 //*
-typedef int TipoChave;
+typedef int TipoChaveBS;
 
-typedef struct TipoRegistro{
-    TipoChave chave;
+typedef struct TipoRegistroBE{
+    TipoChaveBS chave;
     long dado1;
     char dado2[50]; 
-} TipoRegistro;
+} TipoRegistroBE;
 
 typedef enum {Interna, Externa} TipoIntExt;
 
-typedef struct TipoPagina* TipoApontador;
+typedef struct TipoPaginaBE* TipoApontadorBE;
 
-typedef struct TipoPagina {
+typedef struct TipoPaginaBE {
     TipoIntExt Pt;
     union {
         struct {
             int ni;
-            TipoRegistro ri[MM2];
-            TipoApontador pi[MM2 + 1];
+            TipoRegistroBE ri[MM2];
+            TipoApontadorBE pi[MM2 + 1];
         }U0;
         struct {
             int ne;
-            TipoRegistro re[MM2];
+            TipoRegistroBE re[MM2];
         }U1;
     }UU;
-} TipoPagina;
+} TipoPaginaBE;
 
-int pesquisa_BS(TipoRegistro *x, TipoApontador *Ap);
-void arvB_main(int chave, FILE *arq, int qtd_limite);
-void Inicializa(TipoApontador arvore);
-void bstar_Insere(TipoRegistro reg, TipoApontador *Ap);
-void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro *RegRetorno, TipoApontador *ApRetorno);
-void bstar_InsereNaPagina(TipoApontador Ap, TipoRegistro Reg, TipoApontador ApDir);
-void escreverValor(TipoApontador *Ap);
-void bstar_Imprime(TipoApontador Ap);
+int pesquisa_BS(TipoRegistroBE *x, TipoApontadorBE *Ap);
+void arvBE_main(int chave, FILE *arq, int qtd_limite);
+void InicializaBE(TipoApontadorBE arvore);
+void bstar_Insere(TipoRegistroBE reg, TipoApontadorBE *Ap);
+void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegistroBE *RegRetorno, TipoApontadorBE *ApRetorno);
+void bstar_InsereNaPagina(TipoApontadorBE Ap, TipoRegistroBE Reg, TipoApontadorBE ApDir);
+void escreverValor(TipoApontadorBE *Ap);
+void bstar_Imprime(TipoApontadorBE Ap);
 
 #endif

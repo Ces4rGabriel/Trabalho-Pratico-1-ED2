@@ -33,8 +33,6 @@ void pesSeqInd(int chave, FILE* arq, int qtd_limite){
 
 }
 
-
-
 //pesquisa binaria recursiva
 int pesquisaBinaria(TipoItem x[], TipoItem *item, int esq, int dir){
     if(dir >= esq){
@@ -88,7 +86,6 @@ int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_li
             return 0;
 
     }
-
 }
 
 int verifica(int argc, char *argv[]){

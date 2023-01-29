@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
         break;
 
     case 3:
-        //arq = fopen("arq.bin", "rb");
+        arq = fopen("arq.bin", "rb");
         break;
     }
     if(arq == NULL){
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
         arvB_main(chave, arq, nRegistros);
         break;
     case 4:
-        arvB_main(chave, arq, nRegistros);
+        //arvBE_main(chave, arq, nRegistros);
     }
     fclose(arq);
     return 0;

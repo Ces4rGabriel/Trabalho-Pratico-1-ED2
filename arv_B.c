@@ -114,8 +114,32 @@ void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRe
     *apRetorno = apTemp;
 
 }
+void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
+    short naoAchouPosicao;
+    int k;
+    k = ap->n;
+    naoAchouPosicao = (k > 0);
 
- 
+    //verifica se a pagina tem espaço para inserir o registro
+    while (naoAchouPosicao){
+        //verifica se a chave é menor que a chave do registro
+        if(Reg.chave >= ap->r[k-1].chave){
+            naoAchouPosicao = 0;
+            break;
+        }
+        //arrasta os registros para a direita
+        ap->r[k] = ap->r[k-1]; //
+        ap->p[k+1] = ap->p[k];
+        k--;
+        if(k < 1)
+            naoAchouPosicao = 0;
+    }
+    //insere o registro na pagina
+    ap->r[k] = Reg;
+    ap->p[k+1] = apDir;
+    ap->n++;
+
+}
 
 int pesquisaArvB(TipoRegistro *x, TipoApontador ap){
     long i = 1;

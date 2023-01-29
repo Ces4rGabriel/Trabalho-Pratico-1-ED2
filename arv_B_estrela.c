@@ -1,17 +1,17 @@
 #include "arv_B_estrela.h"
 
-int pesquisa_BS(TipoRegistro *x, TipoApontador *Ap){
+int pesquisa_BS(TipoRegistroBE *x, TipoApontadorBE *Ap){
     int i;
-    TipoApontador Pag;
+    TipoApontadorBE Pag;
     Pag = *Ap;
     if((*Ap)->Pt == Interna){
         i = 1;
         while(i < Pag->UU.U0.ni && x->chave > Pag->UU.U0.ri[i-1].chave)
             i++;
         if(x->chave == Pag->UU.U0.ri[i-1].chave)
-        pesquisa(x, &Pag->UU.U0.pi[i-1]);
-        else pesquisa(x, &Pag->UU.U0.pi[i-1]);
-        return;
+            pesquisa_BS(x, &Pag->UU.U0.pi[i-1]);
+        else pesquisa_BS(x, &Pag->UU.U0.pi[i-1]);
+        return ;
     }
     i = 1;
     while(i < Pag->UU.U1.ne && x->chave > Pag->UU.U1.re[i-1].chave)
@@ -26,16 +26,16 @@ int pesquisa_BS(TipoRegistro *x, TipoApontador *Ap){
 
 }
 
-void arvB_main(int chave, FILE *arq, int qtd_limite){
-    TipoApontador arvore = NULL;
-    TipoRegistro reg, item;
+void arvBE_main(int chave, FILE *arq, int qtd_limite){
+    TipoApontadorBE arvore = NULL;
+    TipoRegistroBE reg, item;
     item.chave = chave;
     int cont = 0;
     //inicializar a arvore
     Inicializa(arvore);
 
     //criar a arvore com os registros do arquivo e considerando a quantidade limite
-    while(fread(&reg, sizeof(TipoRegistro), 1, arq)&& cont < qtd_limite){
+    while(fread(&reg, sizeof(TipoRegistroBE), 1, arq)&& cont < qtd_limite){
         cont++;
         bstar_Insere(reg, &arvore);
     }
@@ -48,18 +48,18 @@ void arvB_main(int chave, FILE *arq, int qtd_limite){
 
 }
 
-void Inicializa(TipoApontador arvore){
+void InicializaBE(TipoApontadorBE arvore){
     arvore = NULL;
 }
 
-void bstar_Insere(TipoRegistro reg, TipoApontador *Ap) {
+void bstar_Insere(TipoRegistroBE reg, TipoApontadorBE *Ap) {
     short Cresceu;
-    TipoRegistro RegRetorno;
-    TipoPagina *ApRetorno, *ApTemp;
+    TipoRegistroBE RegRetorno;
+    TipoPaginaBE *ApRetorno, *ApTemp;
     bstar_Ins(reg, *Ap, &Cresceu, &RegRetorno, &ApRetorno);
 
     if (Cresceu) { /* Arvore cresce na altura pela raiz */
-        ApTemp = (TipoPagina *)malloc(sizeof(TipoPagina));
+        ApTemp = (TipoPaginaBE *)malloc(sizeof(TipoPaginaBE));
 
         if(ApRetorno == NULL) {
             ApTemp->Pt = Externa;
@@ -80,10 +80,10 @@ void bstar_Insere(TipoRegistro reg, TipoApontador *Ap) {
     }
 }
 
-void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro *RegRetorno, TipoApontador *ApRetorno) {
+void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegistroBE *RegRetorno, TipoApontadorBE *ApRetorno) {
     long i = 1;
     long j;
-    TipoApontador ApTemp;
+    TipoApontadorBE ApTemp;
 
     if (Ap == NULL) {
         *Cresceu = 1;
@@ -118,7 +118,7 @@ void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro 
     }
 
     /* Overflow: Página tem que ser dividida */
-    ApTemp = malloc(sizeof(TipoPagina));
+    ApTemp = malloc(sizeof(TipoPaginaBE));
     ApTemp->UU.U0.ni = 0;
     ApTemp->UU.U0.pi[0] = NULL;
 
@@ -139,7 +139,7 @@ void bstar_Ins(TipoRegistro reg, TipoApontador Ap, short *Cresceu, TipoRegistro 
     *ApRetorno = ApTemp;
 }
 
-void bstar_InsereNaPagina(TipoApontador Ap, TipoRegistro Reg, TipoApontador ApDir) {
+void bstar_InsereNaPagina(TipoApontadorBE Ap, TipoRegistroBE Reg, TipoApontadorBE ApDir) {
     int k = Ap->UU.U1.ne;
     short NaoAchouPosicao = (k > 0);
 
@@ -161,7 +161,7 @@ void bstar_InsereNaPagina(TipoApontador Ap, TipoRegistro Reg, TipoApontador ApDi
     escreverValor(&Ap);
 }
 
-void escreverValor(TipoApontador *Ap) {
+void escreverValor(TipoApontadorBE *Ap) {
     printf("PT: %s\n", (*Ap)->Pt == Interna ? "Interna" : "Externa");
     if ((*Ap)->Pt == Interna) {
         for (int i = 0; i < (*Ap)->UU.U0.ni; ++i) {
@@ -175,7 +175,7 @@ void escreverValor(TipoApontador *Ap) {
 }
 
 //imprimir chaves e registros da arvore B*
-void bstar_Imprime(TipoApontador Ap) {
+void bstar_Imprime(TipoApontadorBE Ap) {
     long i;
     if (Ap == NULL)
         return;

@@ -1,45 +1,47 @@
 #include "gerador.h"
 
-int main(){
+int main()
+{
     geradorMain();
-    return 0;
 }
 
-void geradorMain(){
-    //printf("\nGerando crescente ...");
+void geradorMain()
+{
+    printf("\nGerando crescente ...");
     gerarArquivoCrescente(NUMERODEREGISTROS);
-    //printf("\nCrescente gerado!");
+    printf("\nCrescente gerado!");
 
-    //printf("\nGerando decrescente ...");
-   // gerarArquivoDecrescente(NUMERODEREGISTROS);
-   // printf("\nDecrescente gerado!");
+    printf("\nGerando decrescente ...");
+    gerarArquivoDecrescente(NUMERODEREGISTROS);
+    printf("\nDecrescente gerado!");
 
-   // printf("\nGerando desordenado ...");
-   // gerarArquivoDesordenado(NUMERODEREGISTROS);
-   // printf("\nDesordenado gerado!");
+    printf("\nGerando desordenado ...");
+    gerarArquivoDesordenado(NUMERODEREGISTROS);
+    printf("\nDesordenado gerado!");
 
-   // FILE* arqCre = fopen("arqCre.bin", "rb");
-   // FILE* arqDec = fopen("arqDec.bin", "rb");
-   // FILE* arqDes = fopen("arqDes.bin", "rb");
+    FILE* arqCre = fopen("arqCre.bin", "rb");
+    FILE* arqDec = fopen("arqDec.bin", "rb");
+    FILE* arqDes = fopen("arqDes.bin", "rb");
 
-   // Registro* itensTeste = malloc(2000 * sizeof(Registro));
+    Registro* itensTeste = malloc(2000 * sizeof(Registro));
 
-   // fread(itensTeste, sizeof(Registro), 2000, arqCre);
-    //fread(itensTeste, sizeof(Registro), 2000, arqDec);
-   // fread(itensTeste, sizeof(Registro), 2000, arqDes);
+    fread(itensTeste, sizeof(Registro), 2000, arqCre);
+    fread(itensTeste, sizeof(Registro), 2000, arqDec);
+    fread(itensTeste, sizeof(Registro), 2000, arqDes);
     
-   // free(itensTeste);
-    //fclose(arqCre);
-   // fclose(arqDec);
-   // fclose(arqDes);
+    free(itensTeste);
+    fclose(arqCre);
+    fclose(arqDec);
+    fclose(arqDes);
 }
 
-void gerarArquivoCrescente(int numeroDeRegistros){
+void gerarArquivoCrescente(int numeroDeRegistros)
+{
     FILE *arq;
     Registro item;
     srand(time(NULL));
 
-    arq = fopen("arq_crescente.bin", "wb");
+    arq = fopen("arqCre.bin", "wb");
     for(int i = 0; i < numeroDeRegistros; i++){
         item.chave = i;
         //dado1 aleatorio, valor numerico
@@ -54,7 +56,8 @@ void gerarArquivoCrescente(int numeroDeRegistros){
     fclose(arq);
 }
 
-void gerarArquivoDecrescente(int numeroDeRegistros){
+void gerarArquivoDecrescente(int numeroDeRegistros)
+{
 
     FILE *arq;
     Registro item;
@@ -77,7 +80,8 @@ void gerarArquivoDecrescente(int numeroDeRegistros){
 }
 
 
-void gerarArquivoDesordenado(int numeroDeRegistros){
+void gerarArquivoDesordenado(int numeroDeRegistros)
+{
 
     FILE* arq; 
     Registro item;

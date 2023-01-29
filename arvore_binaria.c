@@ -2,52 +2,51 @@
 
 int main()
 {
-    TipoDadosRecolhidos* dados;
+    TipoDadosRecolhidos* dados = malloc(sizeof(TipoDadosRecolhidos));
     TipoEntradaTerminal entrada;
 
-    entrada.chaveDesejada = 500;
-    entrada.metodoDePesquisa = 1;
+    entrada.chaveDesejada = 5;
+    entrada.metodoDePesquisa = 3;
     entrada.quantidadeDeRegistros = 2000;
-    entrada.situacaoDoArquivo = 1;
+    entrada.situacaoDoArquivo = 3;
 
     buscaBinariaMain(entrada, dados);
+    free(dados);
     return 0;
 }
 
 void buscaBinariaMain(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
 {
-    chamadaConvercao(entrada, dados);
+    //chamadaConvercao(entrada, dados);
 
     FILE* arq;
-    TipoItemBinario itemDesejado;
+
     switch (entrada.situacaoDoArquivo)
     {
     case 1:
         arq = fopen("arqCreArvBin.bin", "rb");
         if(arq == NULL)
             printf("\nErro ao abrir arquivo");
-        itemDesejado = localizaElementoNoArquivo(&arq,  entrada, dados);
-        printf("\n%ld é o seu dado 1", itemDesejado.dado1);
+        dados->itemRetornado = localizaElementoNoArquivo(&arq,  entrada, dados);
+        printf("\nArquivo com %d registros.\nChave e registro retornados: %d - %ld\nNumero de acessos ao arquivo: %d\nNumero de comparacoes dados: %d\nTempo de execucao: %lf", entrada.quantidadeDeRegistros, dados->itemRetornado.chave, dados->itemRetornado.dado1, dados->numeroDeAcessos, dados->numeroDeComparacoes, dados->tempoDecorrido);
         break;
     case 2:
-        arq = fopen("arqCreArvBin.bin", "rb");
+        arq = fopen("arqDecArvBin.bin", "rb");
         if(arq == NULL)
             printf("\nErro ao abrir arquivo");
-        itemDesejado = localizaElementoNoArquivo(&arq,  entrada, dados);
-        printf("\n%ld é o seu dado 1", itemDesejado.dado1);
+        dados->itemRetornado = localizaElementoNoArquivo(&arq,  entrada, dados);
+        printf("\nArquivo com %d registros.\nChave e registro retornados: %d - %ld\nNumero de acessos ao arquivo: %d\nNumero de comparacoes dados: %d\nTempo de execucao: %lf", entrada.quantidadeDeRegistros, dados->itemRetornado.chave, dados->itemRetornado.dado1, dados->numeroDeAcessos, dados->numeroDeComparacoes, dados->tempoDecorrido);
         break;
     case 3:
-        arq = fopen("arqCreArvBin.bin", "rb");
+        arq = fopen("arqDesArvBin.bin", "rb");
         if(arq == NULL)
             printf("\nErro ao abrir arquivo");
-        itemDesejado = localizaElementoNoArquivo(&arq,  entrada, dados);
-        printf("\n%ld é o seu dado 1", itemDesejado.dado1);
+        dados->itemRetornado = localizaElementoNoArquivo(&arq,  entrada, dados);
+        printf("\nArquivo com %d registros.\nChave e registro retornados: %d - %ld\nNumero de acessos ao arquivo: %d\nNumero de comparacoes dados: %d\nTempo de execucao: %lf", entrada.quantidadeDeRegistros, dados->itemRetornado.chave, dados->itemRetornado.dado1, dados->numeroDeAcessos, dados->numeroDeComparacoes, dados->tempoDecorrido);
     break;
     default:
         break;
     }
-
-    
 }
 
 void chamadaConvercao(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
@@ -179,11 +178,12 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTer
     free(itensTeste);
 }
 
-TipoItemBinario localizaElementoNoArquivo(FILE** arq, TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
+TipoItem localizaElementoNoArquivo(FILE** arq, TipoEntradaTerminal entrada, TipoDadosRecolhidos* dados)
 {
-    TipoItemBinario itemObtido;
+    TipoItem itemObtido;
     TipoItemBinario itemRaiz;
     
+    clock_t start, end;
     int posicao = 0;
     int condicional = 1;
 
@@ -191,20 +191,49 @@ TipoItemBinario localizaElementoNoArquivo(FILE** arq, TipoEntradaTerminal entrad
     dados->numeroDeComparacoes = 0;
     dados->tempoDecorrido = 0;
 
+    start = clock();
     while(condicional)
     {
         fseek(*arq, posicao * sizeof(TipoItemBinario), SEEK_SET);
-        dados->numeroDeAcessos++;
         fread(&itemRaiz, sizeof(TipoItemBinario), 1, *arq);
         dados->numeroDeAcessos++;
-        if(entrada.chaveDesejada >= itemRaiz.chave)
+        if(entrada.chaveDesejada == itemRaiz.chave)
+        {
+            dados->numeroDeComparacoes++;
+            itemObtido.chave = itemRaiz.chave;
+            itemObtido.dado1 = itemRaiz.dado1;
+            strcpy(itemObtido.dado2, itemRaiz.dado2);
+            end = clock();
+            dados->tempoDecorrido =  ((double) (end - start));
+            return itemObtido;
+        }
+        else if(entrada.chaveDesejada > itemRaiz.chave)
         {
             dados->numeroDeComparacoes++;
             if(itemRaiz.apontadorDir != -1)
+                posicao = itemRaiz.apontadorDir;
+            else
             {
-
+                itemObtido.chave = -1;
+                end = clock();
+                dados->tempoDecorrido =  ((double) (end - start));
+                return itemObtido;
             }
         }
-        
+        else if(entrada.chaveDesejada < itemRaiz.chave)
+        {
+            dados->numeroDeComparacoes++;
+            if(itemRaiz.apontadorEsq != -1)
+                posicao = itemRaiz.apontadorEsq;
+            else
+            {
+                itemObtido.chave = -1;
+                end = clock();
+                dados->tempoDecorrido =  ((double) (end - start));
+                return itemObtido;
+            }
+        }
     }  
+    itemObtido.chave = -2;
+    return itemObtido;
 }

@@ -49,6 +49,6 @@ void chamadaConvercao(TipoEntradaTerminal , TipoDadosRecolhidos* );
 
 void converteArquivoParaBinario(FILE**, FILE**, TipoEntradaTerminal, TipoDadosRecolhidos*);
 
-TipoItemBinario localizaElementoNoArquivo(FILE** , TipoEntradaTerminal, TipoDadosRecolhidos*);
+TipoItem localizaElementoNoArquivo(FILE** , TipoEntradaTerminal, TipoDadosRecolhidos*);
 
 #endif

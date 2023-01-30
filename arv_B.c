@@ -18,7 +18,7 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
         cont++;
         insere(reg, &arvore, &a);
     }
-    printf("Comparaçoes: %d\n", a.comparacoesC);
+
     clock_t fimC = clock();
     analise->tempoC = (double)(fimC - inicioC) / CLOCKS_PER_SEC; //tempo de criacao
     analise->nTransferencias = cont;
@@ -39,8 +39,7 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
     clock_t fim = clock();
     analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
     analise->comparacoes = a.comparacoes;
-    analise->comparacoesC = a.comparacoesC;
-    
+    analise->comparacoesC = a.comparacoesC;    
 }
 
 //inicializar a arvore
@@ -82,24 +81,25 @@ void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRe
 
     //pesquisa sequencial para encontrar o intervalo
     while (i < ap->n && Reg.chave > ap->r[i-1].chave){
-        i++;
         a->comparacoesC++;
+        i++;
     }
         
 
     //verifica se a chave é igual a chave do registro
+    
     if(Reg.chave == ap->r[i-1].chave)
     {
+        a->comparacoesC++;
         printf("Erro: Registro ja esta presente\n");
         *cresceu = 0;
-        a->comparacoesC++;
         return;
     }
 
     //verifica se a chave é menor que a chave do registro
     if(Reg.chave < ap->r[i-1].chave){
-        i--;
         a->comparacoesC++;
+        i--;
     }
         
     ins(Reg, ap->p[i], cresceu, RegRetorno, apRetorno, a);
@@ -150,7 +150,7 @@ void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir, Analis
     while (naoAchouPosicao){
         //verifica se a chave é menor que a chave do registro
         if(Reg.chave >= ap->r[k-1].chave){
-            a->comparacoesC++;
+            //a->comparacoesC++;
             naoAchouPosicao = 0;
             break;
         }

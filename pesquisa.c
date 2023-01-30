@@ -4,7 +4,6 @@
 #include <time.h>
 #include "pesquisa.h"
 
-
 void pesSeqInd(int chave, FILE* arq, int qtd_limite, Analis * analise, int pp){
     rewind(arq);
     analise->nTransferencias = 0; analise->comparacoes = 0; analise->tempo = 0;

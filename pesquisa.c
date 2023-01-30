@@ -4,61 +4,71 @@
 #include <time.h>
 #include "pesquisa.h"
 
-void pesSeqInd(int chave, FILE* arq, int qtd_limite){
+
+void pesSeqInd(int chave, FILE* arq, int qtd_limite, Analis * analise, int pp){
+    rewind(arq);
+    analise->nTransferencias = 0; analise->comparacoes = 0; analise->tempo = 0;
     TipoIndice tabela[MAXTABELA];
     TipoItem x[ITENSPAGINA];
     TipoItem item;
     int cont, cont_limite;
-    
+    cont_limite = 0;
+    item.chave = chave; //chave a ser pesquisada
     //criar a tabela de indices
-    cont = 0; 
+    cont = 0;
     while(fread(x, sizeof(TipoItem), ITENSPAGINA, arq) > 0 && cont_limite < qtd_limite){ //itenspagina = 1000
         tabela[cont].chave = x[0].chave; 
         cont_limite += ITENSPAGINA;
         cont++;
     }
+    analise->nTransferencias = cont;
 
-    item.chave = chave; //chave a ser pesquisada
     //pesquisar
     clock_t inicio = clock();
-
-    if(pesquisa(tabela, cont, &item, arq, qtd_limite))
-        printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
-    else
-        printf("\nNão encontrado\n");
-    
+    fseek(arq, 0, SEEK_SET);
+    if(pesquisa(tabela, cont, &item, arq, qtd_limite, analise)){
+        if(pp == 1)
+            printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
+    }
+    else{
+        if(pp == 1)
+            printf("\nNao encontrado o item de chave %d\n", item.chave);
+    }
     clock_t fim = clock();
-    double tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
-    printf("\nTempo de execução da função Pesquisa Sequencial Indexada: %f\n", tempo);
+    analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
 
 }
 
 //pesquisa binaria recursiva
-int pesquisaBinaria(TipoItem x[], TipoItem *item, int esq, int dir){
+int pesquisaBinaria(TipoItem x[], TipoItem *item, int esq, int dir, Analis * analise){
+    analise->comparacoes++;
     if(dir >= esq){
         int meio = esq + (dir - esq) / 2;
         if(x[meio].chave == item->chave){
             *item = x[meio];
             return meio;
         }
-        if(x[meio].chave > item->chave)
-            return pesquisaBinaria(x, item, esq, meio - 1);
-
-        return pesquisaBinaria(x, item, meio + 1, dir);
+        if(x[meio].chave > item->chave){
+            return pesquisaBinaria(x, item, esq, meio - 1, analise);
+        }
+        return pesquisaBinaria(x, item, meio + 1, dir, analise);
     }
     return -1;
 }
 
 
 //PESQUISA POR ACESSO SEQUENCIAL INDEXADO
-int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_limite){
+int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_limite, Analis * analise){
     TipoItem pagina[ITENSPAGINA];
     int i, quantitens;
     long desloc;
     
     i = 0;
     //procura pela pag
-    while(i < tam && tabela[i].chave <= item->chave) i++;
+    while(i < tam && tabela[i].chave <= item->chave){
+        analise->comparacoes++;
+        i++;
+    }
 
     //se não encontrou
     if(i == 0)
@@ -68,7 +78,6 @@ int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_li
         if (i < tam) // se nao for a ultima pagina
             quantitens = ITENSPAGINA;
         else {
-            fseek(arq, 0, SEEK_END);
             quantitens = qtd_limite % ITENSPAGINA;
             if (quantitens == 0)
                 quantitens = ITENSPAGINA;
@@ -80,11 +89,10 @@ int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_li
         fread(&pagina, sizeof(TipoItem), quantitens, arq); //ler a pagina toda
 
         // pesquisa binaria na pagina
-        if (pesquisaBinaria(pagina, item, 0, quantitens - 1) != -1)
+        if (pesquisaBinaria(pagina, item, 0, quantitens - 1, analise) != -1)
             return 1;
         else
             return 0;
-
     }
 }
 
@@ -92,7 +100,7 @@ int verifica(int argc, char *argv[]){
     int x = 0;
     
     //verifica o numero de argumentos
-    if (argc < 5){
+    if (argc < 6 || (argc < 5 && strcmp(argv[4], "-P") == 0)){
         printf("Numero de argumentos invalido.\n");
         return 0;
     }

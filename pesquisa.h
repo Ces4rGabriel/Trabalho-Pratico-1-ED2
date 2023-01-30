@@ -1,6 +1,6 @@
 #ifndef PESQUISA_H
 #define PESQUISA_H
-
+#include "analise.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,11 +21,11 @@ typedef struct{
 
 
 
-int pesquisaBinaria(TipoItem [], TipoItem *, int , int );
+int pesquisaBinaria(TipoItem [], TipoItem *, int , int , Analis *);
 
-int pesquisa(TipoIndice [], int , TipoItem* , FILE *, int);
+int pesquisa(TipoIndice [], int , TipoItem* , FILE *, int, Analis *);
 
-void pesSeqInd(int,FILE*, int);
+void pesSeqInd(int,FILE*, int, Analis *, int pp);
 
 int verifica(int , char *[] );
 

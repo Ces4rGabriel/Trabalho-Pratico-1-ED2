@@ -1,15 +1,16 @@
 #include "arv_B.h"
 
 void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
+    clock_t inicio = clock();
     rewind(arq);
     Analis a;
+    a.comparacoes = 0;
     TipoApontador arvore = NULL;
     TipoRegistro reg, item;
     item.chave = chave;
-    int cont = 0;
+    int cont = 1;
     //inicializar a arvore
     Inicializa(arvore);
-
     //criar a arvore com os registros do arquivo e considerando a quantidade limite
     while(fread(&reg, sizeof(TipoRegistro), 1, arq)&& cont < qtd_limite){
         cont++;
@@ -17,18 +18,19 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
     }
     analise->nTransferencias = cont;
     //pesquisar a chave
-    clock_t inicio = clock();
-    if(pesquisaArvB(&item, arvore, &a))
+    if(pesquisaArvB(&item, arvore, &a)){
         if (pp == 1)
             printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
-    else
+    }
+    else{
         if (pp == 1)
             printf("\nNao encontrado o item de chave %d\n", item.chave);
+    }
+    //limpa a memoria alocada
+    limpaArvB(arvore);
     clock_t fim = clock();
     analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
     analise->comparacoes = a.comparacoes;
-    //limpa a memoria alocada
-    limpaArvB(arvore);
 }
 
 //inicializar a arvore
@@ -150,21 +152,27 @@ void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
 
 int pesquisaArvB(TipoRegistro *x, TipoApontador ap, Analis *analise){
     long i = 1;
-    analise->comparacoes++;
     if (ap == NULL){
         return 0;  
     }
     //pesquisa sequencial para encontrar o intervalo
-    while (i < ap->n && x->chave > ap->r[i-1].chave)
+    while (i < ap->n && x->chave > ap->r[i-1].chave){
+        analise->comparacoes++;
         i++;
+    }
     if (x->chave == ap->r[i-1].chave){ //verifica se a chave é igual a chave do registro
         *x = ap->r[i-1]; //se for igual, o registro é retornado
+        analise->comparacoes++;
         return 1;
     }
-    if(x->chave < ap->r[i-1].chave)
+    if(x->chave < ap->r[i-1].chave){
+        analise->comparacoes++;
         return pesquisaArvB(x, ap->p[i-1], analise);
-    else
+    }
+    else{
+        analise->comparacoes++;
         return pesquisaArvB(x, ap->p[i], analise);
+    }   
 }
 
 void imprimir(TipoApontador arv){

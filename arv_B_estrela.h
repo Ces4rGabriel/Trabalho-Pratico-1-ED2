@@ -1,5 +1,6 @@
-#ifndef ARVOREBESTRELA
-#define ARVOREBESTRELA
+#ifndef ARVOREBESTRELA_H
+#define ARVOREBESTRELA_H
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>

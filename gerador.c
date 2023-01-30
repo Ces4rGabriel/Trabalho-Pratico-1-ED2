@@ -1,20 +1,12 @@
 #include "header.h"
 
-int main()
-{
-    TipoEntradaTerminal entrada;
-    entrada.situacaoDoArquivo = 3;
-    entrada.quantidadeDeRegistros = 200;
-    geradorMain(entrada);
-}
-
 void geradorMain(TipoEntradaTerminal entrada)
 {
     int comando;
     printf("\nGERADOR DE ARQUIVOS BINARIOS\n\n");
-    printf("Caso voce tenha selecionado a situacao de arquivo 3, EH NECESSARIO GERAR UM ARQUIVO DO TAMANHO DA ENTRADA PARA A BUSCA EM ARQUIVO DESORDENADO! Isso ocorrerá automaticamente.\n");
+    printf("Caso voce tenha selecionado a situacao de arquivo 3, EH NECESSARIO GERAR UM ARQUIVO DO TAMANHO DA ENTRADA PARA A BUSCA EM ARQUIVO DESORDENADO! Isso ocorrera automaticamente.\n");
     printf("Para gerar um arquivo desordenado de 2.000.000 de registros, passe esse argumento no terminal com situacao 3\n");
-    printf("Se voce nao quer recriar o arquivo desordenado, digite -1 (Caso voce tenha alterado a quantidade de registros e utilize esse comando, o programa não funcionara corretamente)\n");
+    printf("Se voce nao quer recriar o arquivo desordenado, digite -1 (Caso voce tenha alterado a quantidade de registros e utilize esse comando, o programa nao funcionara corretamente)\n");
     printf("Para gerar as outras 2 situacoes, crescente e decrescente, de arquivos com 2.000.000 de registros digite 1\n");
     printf("\nComando: ");
     scanf("%d", &comando);
@@ -28,7 +20,7 @@ void geradorMain(TipoEntradaTerminal entrada)
         gerarArquivoDecrescente(NUMERODEREGISTROS);
         printf("\nDecrescente gerado!");
     }
-    if(entrada.situacaoDoArquivo == 3 && comando != 1);
+    if(entrada.situacaoDoArquivo == 3 && comando != -1)
     {
         printf("\nGerando desordenado ...");
         gerarArquivoDesordenado(entrada.quantidadeDeRegistros);

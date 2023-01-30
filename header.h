@@ -7,8 +7,8 @@
 #include <string.h>
 
 #define TAMANHOSTRING 500
-#define NUMERODEREGISTROS 100
-#define ITENSPAGINA 1000
+#define NUMERODEREGISTROS 40000
+#define ITENSPAGINA 100
 #define MAXTABELA 2000
 #define M 10
 
@@ -35,12 +35,23 @@ typedef struct TipoRegistroAux
     int apontadorDir;
 }TipoRegistroAux;
 
-typedef struct TipoPagina
+typedef struct TipoIndice
+{
+    int chave;
+}TipoIndice;
+
+typedef int TipoChave;
+
+typedef struct TipoPagina TipoPagina;
+
+typedef struct TipoPagina* TipoApontador;
+
+struct TipoPagina
 {
     short n; //quantidade de posições dentro do vetor r
     TipoRegistro r[2*M];
     TipoApontador p[2*M + 1];
-}TipoPagina;
+};
 
 
 typedef struct TipoDadosRecolhidos
@@ -58,16 +69,10 @@ typedef struct TipoEntradaTerminal
     int situacaoDoArquivo;
     int chaveDesejada;
     int argOpcional;
+    int testeAutomatizado;
 }TipoEntradaTerminal;
 
-typedef struct TipoIndice
-{
-    int chave;
-}TipoIndice;
 
-typedef struct TipoPagina* TipoApontador;
-
-typedef int TipoChave;
 
 //Funcoes do gerador 
 void geradorMain(TipoEntradaTerminal);
@@ -87,7 +92,7 @@ void chamadaConvercao(TipoEntradaTerminal , TipoDadosRecolhidos* );
 void converteArquivoParaBinario(FILE**, FILE**, TipoEntradaTerminal, TipoDadosRecolhidos*);
 TipoRegistro localizaElementoNoArquivo(FILE** , TipoEntradaTerminal, TipoDadosRecolhidos*);
 
-//Funcoes da arvore B
+/*//Funcoes da arvore B
 void arvB_main(int , FILE *, int, TipoDadosRecolhidos *, int pp);
 void Inicializa(TipoApontador arvore);
 int pesquisaArvB(TipoRegistro *x, TipoApontador ap, TipoDadosRecolhidos *analise);
@@ -95,6 +100,6 @@ void imprimir(TipoApontador arv);
 void insere(TipoRegistro Reg, TipoApontador *ap);
 void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRetorno, TipoApontador *apRetorno);
 void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir);
-void limpaArvB(TipoApontador ap);
+void limpaArvB(TipoApontador ap);*/
 
 #endif

@@ -5,9 +5,9 @@ int main()
     TipoDadosRecolhidos* dadosPesquisa = malloc(sizeof(TipoDadosRecolhidos));
     TipoEntradaTerminal entrada;
 
-    entrada.chaveDesejada = 5;
+    entrada.chaveDesejada = 120999;
     entrada.metodoDePesquisa = 3;
-    entrada.quantidadeDeRegistros = NUMERODEREGISTROS;
+    entrada.quantidadeDeRegistros = 10;
     entrada.situacaoDoArquivo = 1;
 
     chamadaConvercao(entrada, dadosPesquisa);
@@ -23,46 +23,50 @@ void chamadaConvercao(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dadosPes
     FILE* arqAvrEscrita;
     int checagem;
 
-    printf("\nDeseja converter arqCre.bin (Arquivo crescente) para um arquivo em forma de arvore binaria (gera o arquivo arqCreArvBin.bin)? \n(1 - sim/0 - não) ");
-    scanf("%d", &checagem);
+    geradorMain(entrada);
+    if(entrada.situacaoDoArquivo != 3){
+        printf("\nDeseja converter arqCre.bin (Arquivo crescente) para um arquivo em forma de arvore binaria (gera o arquivo arqCreArvBin.bin)? \n(1 - sim/0 - não) ");
+        scanf("%d", &checagem);
 
-    if(checagem != 0)
-    {
-        arq = fopen("arqCre.bin","rb");
-        arqAvrEscrita = fopen("arqCreArvBin.bin", "w+b");
-        if(arq == NULL || arqAvrEscrita == NULL)
-            printf("\nErro ao abrir os arquivos");
-        converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dadosPesquisa);
-        fclose(arq);
-        fclose(arqAvrEscrita);
+        if(checagem != 0)
+        {
+            arq = fopen("arqCre.bin","rb");
+            arqAvrEscrita = fopen("arqCreArvBin.bin", "w+b");
+            if(arq == NULL || arqAvrEscrita == NULL)
+                printf("\nErro ao abrir os arquivos");
+            converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dadosPesquisa);
+            fclose(arq);
+            fclose(arqAvrEscrita);
+        }
+
+        printf("\nDeseja converter arqDec.bin (Arquivo decrescente) para um arquivo em forma de arvore binaria (gera o arquivo arqDecArvBin.bin)? \n(1 - sim/0 - não) ");
+        scanf("%d", &checagem);
+
+        if(checagem != 0)
+        {
+            arq = fopen("arqDec.bin","rb");
+            arqAvrEscrita = fopen("arqDecArvBin.bin", "w+b");
+            if(arq == NULL || arqAvrEscrita == NULL)
+                printf("\nErro ao abrir os arquivos");
+            converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dadosPesquisa);
+            fclose(arq);
+            fclose(arqAvrEscrita);
+        }
     }
+    else if(entrada.situacaoDoArquivo == 3){
+        printf("\nDeseja converter arqDes.bin (Arquivo desordenado) para um arquivo em forma de arvore binaria (gera o arquivo arqDesArvBin.bin)? \n(1 - sim/0 - não) ");
+        scanf("%d", &checagem);
 
-    printf("\nDeseja converter arqDec.bin (Arquivo decrescente) para um arquivo em forma de arvore binaria (gera o arquivo arqDecArvBin.bin)? \n(1 - sim/0 - não) ");
-    scanf("%d", &checagem);
-
-    if(checagem != 0)
-    {
-        arq = fopen("arqDes.bin","rb");
-        arqAvrEscrita = fopen("arqDesArvBin.bin", "w+b");
-        if(arq == NULL || arqAvrEscrita == NULL)
-            printf("\nErro ao abrir os arquivos");
-        converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dadosPesquisa);
-        fclose(arq);
-        fclose(arqAvrEscrita);
-    }
-
-    printf("\nDeseja converter arqCre.bin (Arquivo desordenado) para um arquivo em forma de arvore binaria (gera o arquivo arqDesArvBin.bin)? \n(1 - sim/0 - não) ");
-    scanf("%d", &checagem);
-
-    if(checagem != 0)
-    {
-        arq = fopen("arqDec.bin","rb");
-        arqAvrEscrita = fopen("arqDecArvBin.bin", "w+b");
-        if(arq == NULL || arqAvrEscrita == NULL)
-            printf("\nErro ao abrir os arquivos");
-        converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dadosPesquisa);
-        fclose(arq);
-        fclose(arqAvrEscrita);
+        if(checagem != 0)
+        {
+            arq = fopen("arqDes.bin","rb");
+            arqAvrEscrita = fopen("arqDesArvBin.bin", "w+b");
+            if(arq == NULL || arqAvrEscrita == NULL)
+                printf("\nErro ao abrir os arquivos");
+            converteArquivoParaBinario(&arq, &arqAvrEscrita, entrada, dadosPesquisa);
+            fclose(arq);
+            fclose(arqAvrEscrita);
+        }
     }
 }
 
@@ -72,20 +76,21 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTer
     if(entrada.situacaoDoArquivo != 3)
     {
         printf("Convertendo crescente/decrescente para arvore binaria\nAguarde...");
-        TipoRegistro* itensOriginais = malloc(100 * sizeof(TipoRegistro));
+        TipoRegistro* itensOriginais = malloc(10000 * sizeof(TipoRegistro));
         TipoRegistroAux* itensAuxiliares = malloc(NUMERODEREGISTROS * sizeof(TipoRegistroAux));
-        TipoRegistroBinario* itensBinarios = malloc(100 * sizeof(TipoRegistroBinario));
+        TipoRegistroBinario* itensBinarios = malloc(10000 * sizeof(TipoRegistroBinario));
 
         int primeiraIteracao = 1;
         int percorreAuxiliares = 1;
         int percorreAuxiliaresEscritaFinal = 0;
         int raiz = 0;
         int cond = 1;
+        int aux = 1;
 
         for(int i = 0; i < NUMERODEREGISTROS/10000; i++)
         {
             fread(itensOriginais, sizeof(TipoRegistro), 10000, *arq);
-            for(int j = 0; j < 100; j++)
+            for(int j = 0; j < 10000; j++)
             {
                 if(primeiraIteracao)
                 {
@@ -136,18 +141,29 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTer
                     raiz = 0;
                 }
             }
-            for(int k = 0; k < 10000; k++)
+        }
+        fseek(*arq, 0*sizeof(TipoRegistro), SEEK_SET);
+        for(int i = 0; i < entrada.quantidadeDeRegistros/10000; i++)
+        {
+            fread(itensOriginais, sizeof(TipoRegistro), 10000, *arq);
+            for(int j = 0; j < 10000; j++)
             {
-                itensBinarios[k].apontadorDir = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorDir;
-                itensBinarios[k].apontadorEsq = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorEsq;
+                itensBinarios[j].apontadorDir = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorDir;
+                itensBinarios[j].apontadorEsq = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorEsq;
+                itensBinarios[j].chave = itensAuxiliares[percorreAuxiliares].chave;
+                itensBinarios[j].chave = itensOriginais[j].chave;
+                itensBinarios[j].dado1 = itensOriginais[j].dado1;
+                strcpy(itensBinarios[j].dado2, itensOriginais[j].dado2);
                 percorreAuxiliaresEscritaFinal++;
+                
             }
             fwrite(itensBinarios, sizeof(TipoRegistroBinario), 10000, *arqAvrEscrita);
+            printf("10000 itens anexados\n");
         }
         free(itensOriginais);
         free(itensAuxiliares);
     }
-    else
+    else if(entrada.situacaoDoArquivo == 3)
     {
         printf("\nConvertendo arquivo desordenado\nESSE PROCESSO É O MAIS DEMORADO!!! \nAguarde...");
         TipoRegistro* itensOriginais = malloc(100 * sizeof(TipoRegistro));
@@ -182,10 +198,6 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTer
                     itensAuxiliares[percorreAuxiliares].apontadorEsq = -1;
                     itensAuxiliares[percorreAuxiliares].chave = itensOriginais[j].chave;
 
-                    itensBinarios[j].chave = itensOriginais[j].chave;
-                    itensBinarios[j].dado1 = itensOriginais[j].dado1;
-                    strcpy(itensBinarios[j].dado2, itensOriginais[j].dado2);
-
                     while(cond)
                     {
                         if(itensOriginais[j].chave >= itensAuxiliares[raiz].chave)
@@ -214,193 +226,28 @@ void converteArquivoParaBinario(FILE** arq, FILE** arqAvrEscrita, TipoEntradaTer
                     raiz = 0;
                 }
             }
-            for(int k = 0; k < 100; k++)
+        }
+        fseek(*arq, 0*sizeof(TipoRegistro), SEEK_SET);
+        for(int i = 0; i < entrada.quantidadeDeRegistros/100; i++)
+        {
+            fread(itensOriginais, sizeof(TipoRegistro), 100, *arq);
+            for(int j = 0; j < 100; j++)
             {
-                itensBinarios[k].apontadorDir = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorDir;
-                itensBinarios[k].apontadorEsq = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorEsq;
+                itensBinarios[j].apontadorDir = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorDir;
+                itensBinarios[j].apontadorEsq = itensAuxiliares[percorreAuxiliaresEscritaFinal].apontadorEsq;
+                itensBinarios[j].chave = itensAuxiliares[percorreAuxiliares].chave;
+                itensBinarios[j].chave = itensOriginais[j].chave;
+                itensBinarios[j].dado1 = itensOriginais[j].dado1;
+                strcpy(itensBinarios[j].dado2, itensOriginais[j].dado2);
                 percorreAuxiliaresEscritaFinal++;
+                
             }
             fwrite(itensBinarios, sizeof(TipoRegistroBinario), 100, *arqAvrEscrita);
+            printf("100 anexados \n");
         }
         free(itensOriginais);
         free(itensAuxiliares);
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*TipoRegistro* itensArquivoOriginal = malloc(1000 * sizeof(TipoRegistro));
-    TipoRegistroBinario* itensTeste = malloc(2000 * sizeof(TipoRegistroBinario));
-    TipoRegistroBinario itemParaBinario, itemRaizDaArvBinaria;
-    int raizAtual;
-    int condicional = 1;
-    int aux = 0;
-
-
-    for(int i = 0; i < entrada.quantidadeDeRegistros/1000; i++)
-    {
-        fread(itensArquivoOriginal, sizeof(TipoRegistro), 1000, *arq);
-        for(int j = 0; j < 1000; j++)
-        {
-            itemParaBinario.apontadorDir = -1;
-            itemParaBinario.apontadorEsq = -1;
-            itemParaBinario.chave = itensArquivoOriginal[j].chave;
-            itemParaBinario.dado1 = itensArquivoOriginal[j].dado1;
-            strcpy(itemParaBinario.dado2, itensArquivoOriginal[j].dado2);
-            if(ftell(*arqAvrEscrita) == 0)
-            {
-                fwrite(&itemParaBinario, sizeof(TipoRegistroBinario), 1, *arqAvrEscrita);
-                raizAtual = 0;
-                condicional = 0;
-            }
-            else
-                fwrite(&itemParaBinario, sizeof(TipoRegistroBinario), 1, *arqAvrEscrita);
-            while(condicional)
-            {
-                fseek(*arqAvrEscrita, raizAtual * sizeof(TipoRegistroBinario), SEEK_SET);
-                fread(&itemRaizDaArvBinaria, sizeof(TipoRegistroBinario), 1, *arqAvrEscrita);
-
-                if(itemParaBinario.chave >= itemRaizDaArvBinaria.chave)
-                {
-                    if(itemRaizDaArvBinaria.apontadorDir == -1)
-                    {
-                        fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_END);
-                        itemRaizDaArvBinaria.apontadorDir = (ftell(*arqAvrEscrita))/sizeof(TipoRegistroBinario) - 1;
-                        fseek(*arqAvrEscrita, raizAtual * sizeof(TipoRegistroBinario), SEEK_SET);
-                        fwrite(&itemRaizDaArvBinaria, sizeof(TipoRegistroBinario), 1, *arqAvrEscrita);
-                        fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_END);
-                        condicional = 0;
-                    }
-                    else
-                        raizAtual = itemRaizDaArvBinaria.apontadorDir; 
-                }
-                else
-                {
-                    if(itemRaizDaArvBinaria.apontadorEsq == -1)
-                    {
-                        fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_END);
-                        itemRaizDaArvBinaria.apontadorEsq = (ftell(*arqAvrEscrita))/sizeof(TipoRegistroBinario) - 1;
-                        fseek(*arqAvrEscrita, raizAtual * sizeof(TipoRegistroBinario), SEEK_SET);
-                        fwrite(&itemRaizDaArvBinaria, sizeof(TipoRegistroBinario), 1, *arqAvrEscrita);
-                        fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_END);
-                        condicional = 0;
-                    }
-                    else
-                        raizAtual = itemRaizDaArvBinaria.apontadorEsq; 
-                }
-            }
-            condicional = 1;
-            raizAtual = 0;
-            aux++;
-            printf("\n%d", aux);
-        }
-        fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_SET);
-        fread(itensTeste, sizeof(TipoRegistroBinario), 1000, *arqAvrEscrita);
-        fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_END);
-        
-    }
-    fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_SET);
-    fread(itensTeste, sizeof(TipoRegistroBinario), 2000, *arqAvrEscrita);
-    fseek(*arqAvrEscrita, 0 * sizeof(TipoRegistroBinario), SEEK_END);
-    free(itensArquivoOriginal);
-    free(itensTeste);*/
 }
 
 void buscaBinariaMain(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dadosPesquisa)

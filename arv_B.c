@@ -1,23 +1,31 @@
 #include "arv_B.h"
 
 void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
-    clock_t inicio = clock();
     rewind(arq);
     Analis a;
     a.comparacoes = 0;
+    a.comparacoesC = 0;
     TipoApontador arvore = NULL;
     TipoRegistro reg, item;
     item.chave = chave;
     int cont = 1;
+
     //inicializar a arvore
+    clock_t inicioC = clock();
     Inicializa(arvore);
     //criar a arvore com os registros do arquivo e considerando a quantidade limite
     while(fread(&reg, sizeof(TipoRegistro), 1, arq)&& cont < qtd_limite){
         cont++;
-        insere(reg, &arvore);
+        insere(reg, &arvore, &a);
     }
+    printf("Comparaçoes: %d\n", a.comparacoesC);
+    clock_t fimC = clock();
+    analise->tempoC = (double)(fimC - inicioC) / CLOCKS_PER_SEC; //tempo de criacao
     analise->nTransferencias = cont;
+    analise->criacao = cont;
+
     //pesquisar a chave
+    clock_t inicio = clock();
     if(pesquisaArvB(&item, arvore, &a)){
         if (pp == 1)
             printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
@@ -31,6 +39,8 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
     clock_t fim = clock();
     analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
     analise->comparacoes = a.comparacoes;
+    analise->comparacoesC = a.comparacoesC;
+    
 }
 
 //inicializar a arvore
@@ -38,13 +48,13 @@ void Inicializa(TipoApontador arvore){
     arvore = NULL;
 }
 
-void insere(TipoRegistro Reg, TipoApontador *ap){
+void insere(TipoRegistro Reg, TipoApontador *ap, Analis *a){
     short cresceu;
     TipoRegistro RegRetorno;
     TipoPagina *apRetorno;
     TipoPagina *apTemp;
 
-    ins(Reg, *ap, &cresceu, &RegRetorno, &apRetorno);
+    ins(Reg, *ap, &cresceu, &RegRetorno, &apRetorno, a);
 
     //verifica se a pagina cresceu e cria uma nova pagina raiz
     if(cresceu){
@@ -57,7 +67,7 @@ void insere(TipoRegistro Reg, TipoApontador *ap){
     }
 }
 
-void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRetorno, TipoApontador *apRetorno){
+void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRetorno, TipoApontador *apRetorno, Analis *a){
     long i = 1;
     long j;
     TipoApontador apTemp;
@@ -71,21 +81,28 @@ void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRe
     }
 
     //pesquisa sequencial para encontrar o intervalo
-    while (i < ap->n && Reg.chave > ap->r[i-1].chave)
+    while (i < ap->n && Reg.chave > ap->r[i-1].chave){
         i++;
+        a->comparacoesC++;
+    }
+        
 
     //verifica se a chave é igual a chave do registro
     if(Reg.chave == ap->r[i-1].chave)
     {
         printf("Erro: Registro ja esta presente\n");
         *cresceu = 0;
+        a->comparacoesC++;
         return;
     }
 
     //verifica se a chave é menor que a chave do registro
-    if(Reg.chave < ap->r[i-1].chave)
+    if(Reg.chave < ap->r[i-1].chave){
         i--;
-    ins(Reg, ap->p[i], cresceu, RegRetorno, apRetorno);
+        a->comparacoesC++;
+    }
+        
+    ins(Reg, ap->p[i], cresceu, RegRetorno, apRetorno, a);
 
     //verifica se a pagina não cresceu
     if (!*cresceu)
@@ -93,7 +110,7 @@ void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRe
     
     //verifica se a pagina tem espaço para inserir o registro
     if(ap->n < 2*M){
-        insereNaPag(ap, *RegRetorno, *apRetorno);
+        insereNaPag(ap, *RegRetorno, *apRetorno, a);
         *cresceu = 0;
         return;
     }
@@ -104,15 +121,15 @@ void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRe
 
     //Escolhe a pagina que o item será inserido
     if(i < M + 1){
-        insereNaPag(apTemp, ap->r[2*M-1], ap->p[2*M]); // muda o ultimo item de pagina
+        insereNaPag(apTemp, ap->r[2*M-1], ap->p[2*M], a); // muda o ultimo item de pagina
         ap->n--; 
-        insereNaPag(ap, *RegRetorno, *apRetorno); //insere na pagina corrente
+        insereNaPag(ap, *RegRetorno, *apRetorno, a); //insere na pagina corrente
     }
     else
-        insereNaPag(apTemp, *RegRetorno, *apRetorno); //insere na nova pagina
+        insereNaPag(apTemp, *RegRetorno, *apRetorno, a); //insere na nova pagina
 
     for(j = M + 2; j <= 2*M; j++)
-        insereNaPag(apTemp, ap->r[j-1], ap->p[j]);
+        insereNaPag(apTemp, ap->r[j-1], ap->p[j], a);
     
     //atualiza a pagina
     ap->n = M;
@@ -123,7 +140,7 @@ void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRe
     *apRetorno = apTemp;
 
 }
-void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
+void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir, Analis *a){
     short naoAchouPosicao;
     int k;
     k = ap->n;
@@ -133,6 +150,7 @@ void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
     while (naoAchouPosicao){
         //verifica se a chave é menor que a chave do registro
         if(Reg.chave >= ap->r[k-1].chave){
+            a->comparacoesC++;
             naoAchouPosicao = 0;
             break;
         }

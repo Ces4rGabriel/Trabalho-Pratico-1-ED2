@@ -31,10 +31,10 @@ int pesquisaArvB(TipoRegistro *x, TipoApontador ap, Analis *analise);
 
 void imprimir(TipoApontador arv);
 
-void insere(TipoRegistro Reg, TipoApontador *ap);
+void insere(TipoRegistro Reg, TipoApontador *ap, Analis *a);
 
-void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRetorno, TipoApontador *apRetorno);
+void ins(TipoRegistro Reg, TipoApontador ap, short *cresceu, TipoRegistro *RegRetorno, TipoApontador *apRetorno, Analis *a);
 
-void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir);
+void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir, Analis *a);
 
 void limpaArvB(TipoApontador ap);

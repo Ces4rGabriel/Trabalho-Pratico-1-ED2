@@ -5,8 +5,7 @@
 #include "arv_B.h"
 #include "arv_B_estrela.h"
 
-void analisarPesq(FILE* arq){
-    srand(time(NULL));
+void analisarCriacao(FILE* arq){
     Analis a[20];
     Analis r;
     int tam[5] = {100, 200, 20000, 200000, 2000000};
@@ -15,7 +14,77 @@ void analisarPesq(FILE* arq){
 
     //arvB
     printf("Crescente\n");
-    printf("\__ARVORE B__\n");
+    printf("__ARVORE B__\n");
+
+    r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    for(int i = 0; i < 5; i++){
+        for (int j = 0; j < 20; j++){
+            arvB_main(chave[j] * mult[i], arq, tam[i], &a[j], 0);
+        }
+        //calcular a media de tempo
+        for (int j = 0; j < 20; j++){
+            r.tempoC += a[j].tempoC;
+            r.nTransferencias += a[j].nTransferencias;
+            r.comparacoesC += a[j].comparacoesC;
+        }
+        printf("TAMANHO: -[%d]-\n", tam[i]);
+        printf("Tempo medio: %.10f\n", r.tempoC/20);
+        printf("  Comparacoes medio: %d\n", r.comparacoesC/20);
+        printf("    Transferencias medio: %d\n", r.nTransferencias/20);
+        r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    }
+
+    printf("\nDecrescente\n");
+    fclose(arq);
+    fopen("arq_decrescente.bin", "rb");
+    for(int i = 0; i < 5; i++){
+
+        for (int j = 0; j < 20; j++){
+            arvB_main(chave[j] * mult[i], arq, tam[i], &a[j], 0);
+        }
+        //calcular a media de tempo
+        for (int j = 0; j < 20; j++){
+            r.tempoC += a[j].tempoC;
+            r.nTransferencias += a[j].nTransferencias;
+            r.comparacoesC += a[j].comparacoesC;
+        }
+
+        printf("TAMANHO: %d\n", tam[i]);
+        printf("Tempo medio: %.10f\n", r.tempoC/20);
+        printf("  Comparacoes medio: %d\n", r.comparacoesC/20);
+        printf("    Transferencias medio: %d\n", r.nTransferencias/20);
+        r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    }
+    //PSI
+    printf("\nPESQUISA SEQUENCIAL INDEXADA\n");
+    for(int i = 0; i < 5; i++){
+        for (int j = 0; j < 20; j++){
+            pesSeqInd(chave[j] * mult[i], arq, tam[i], &a[j], 0);
+        }
+        //calcular a media de tempo
+        for (int j = 0; j < 20; j++){
+            r.tempoC += a[j].tempoC;
+            r.nTransferencias += a[j].nTransferencias;
+            r.criacao += a[j].criacao;
+        }
+        printf("TAMANHO: %d\n", tam[i]);
+        printf("Tempo medio: %.10f\n", r.tempoC/20);
+        printf("  Comparacoes medio: %d\n", 0);
+        printf("    Transferencias medio: %d\n", r.nTransferencias/20);
+        r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    }
+}
+
+void analisarPesq(FILE* arq){
+    Analis a[20];
+    Analis r;
+    int tam[5] = {100, 200, 20000, 200000, 2000000};
+    int chave[20] = {1 , 3 ,5 , 9, 10, 20, 27,35, 40, 43, 55, 65, 68, 70, 85, 89, 91, 93, 98, 101};
+    int mult[5] = {1, 2, 20, 2000, 20000};
+
+    //arvB
+    printf("Crescente\n");
+    printf("__ARVORE B__\n");
     r.tempo = 0; r.comparacoes = 0; r.nTransferencias = 0;
     for(int i = 0; i < 5; i++){
         for (int j = 0; j < 20; j++){
@@ -127,8 +196,8 @@ int main(int argc, char *argv[]){
     case 4:
         arvBE_main(chave, arq, nRegistros);
     }
-    analisarPesq(arq);
-
+    //analisarPesq(arq);
+    //analisarCriacao(arq);
     fclose(arq);
     return 0;
 }

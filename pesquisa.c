@@ -16,12 +16,16 @@ void pesSeqInd(int chave, FILE* arq, int qtd_limite, Analis * analise, int pp){
     item.chave = chave; //chave a ser pesquisada
     //criar a tabela de indices
     cont = 0;
+    clock_t inicioC = clock();
     while(fread(x, sizeof(TipoItem), ITENSPAGINA, arq) > 0 && cont_limite < qtd_limite){ //itenspagina = 1000
         tabela[cont].chave = x[0].chave; 
         cont_limite += ITENSPAGINA;
         cont++;
     }
+    clock_t fimC = clock();
+    analise->tempoC = (double)(fimC - inicioC) / CLOCKS_PER_SEC;
     analise->nTransferencias = cont;
+    analise->criacao = cont_limite;
 
     //pesquisar
     clock_t inicio = clock();
@@ -100,7 +104,7 @@ int verifica(int argc, char *argv[]){
     int x = 0;
     
     //verifica o numero de argumentos
-    if (argc < 6 || (argc < 5 && strcmp(argv[4], "-P") == 0)){
+    if (argc < 5 || (argc < 5 && strcmp(argv[4], "-P") == 0)){
         printf("Numero de argumentos invalido.\n");
         return 0;
     }

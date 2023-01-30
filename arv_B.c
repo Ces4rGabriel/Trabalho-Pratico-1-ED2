@@ -1,8 +1,8 @@
-#include "arv_B.h"
+#include "header.h"
 
-void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
+void arvB_main(int chave, FILE *arq, int qtd_limite, TipoDadosRecolhidos *analise, int pp){
     rewind(arq);
-    Analis a;
+    TipoDadosRecolhidos a;
     TipoApontador arvore = NULL;
     TipoRegistro reg, item;
     item.chave = chave;
@@ -15,7 +15,7 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
         cont++;
         insere(reg, &arvore);
     }
-    analise->nTransferencias = cont;
+    analise->numeroDeAcessos = cont;
     //pesquisar a chave
     clock_t inicio = clock();
     if(pesquisaArvB(&item, arvore, &a))
@@ -25,8 +25,8 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
         if (pp == 1)
             printf("\nNao encontrado o item de chave %d\n", item.chave);
     clock_t fim = clock();
-    analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
-    analise->comparacoes = a.comparacoes;
+    analise->tempoDecorrido = (double)(fim - inicio) / CLOCKS_PER_SEC; 
+    analise->numeroDeComparacoes = a.numeroDeComparacoes;
     //limpa a memoria alocada
     limpaArvB(arvore);
 }
@@ -148,9 +148,9 @@ void insereNaPag(TipoApontador ap, TipoRegistro Reg, TipoApontador apDir){
 
 }
 
-int pesquisaArvB(TipoRegistro *x, TipoApontador ap, Analis *analise){
+int pesquisaArvB(TipoRegistro *x, TipoApontador ap, TipoDadosRecolhidos *analise){
     long i = 1;
-    analise->comparacoes++;
+    analise->numeroDeComparacoes++;
     if (ap == NULL){
         return 0;  
     }

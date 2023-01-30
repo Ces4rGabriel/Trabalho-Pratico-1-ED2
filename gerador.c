@@ -1,44 +1,45 @@
-#include "gerador.h"
+#include "header.h"
 
 int main()
 {
-    geradorMain();
+    TipoEntradaTerminal entrada;
+    entrada.situacaoDoArquivo = 3;
+    entrada.quantidadeDeRegistros = 200;
+    geradorMain(entrada);
 }
 
-void geradorMain()
+void geradorMain(TipoEntradaTerminal entrada)
 {
-    printf("\nGerando crescente ...");
-    gerarArquivoCrescente(NUMERODEREGISTROS);
-    printf("\nCrescente gerado!");
+    int comando;
+    printf("\nGERADOR DE ARQUIVOS BINARIOS\n\n");
+    printf("Caso voce tenha selecionado a situacao de arquivo 3, EH NECESSARIO GERAR UM ARQUIVO DO TAMANHO DA ENTRADA PARA A BUSCA EM ARQUIVO DESORDENADO! Isso ocorrerá automaticamente.\n");
+    printf("Para gerar um arquivo desordenado de 2.000.000 de registros, passe esse argumento no terminal com situacao 3\n");
+    printf("Se voce nao quer recriar o arquivo desordenado, digite -1 (Caso voce tenha alterado a quantidade de registros e utilize esse comando, o programa não funcionara corretamente)\n");
+    printf("Para gerar as outras 2 situacoes, crescente e decrescente, de arquivos com 2.000.000 de registros digite 1\n");
+    printf("\nComando: ");
+    scanf("%d", &comando);
+    if(comando == 1)
+    {
+        printf("\nGerando crescente ...");
+        gerarArquivoCrescente(NUMERODEREGISTROS);
+        printf("\nCrescente gerado!");
 
-    printf("\nGerando decrescente ...");
-    gerarArquivoDecrescente(NUMERODEREGISTROS);
-    printf("\nDecrescente gerado!");
-
-    printf("\nGerando desordenado ...");
-    gerarArquivoDesordenado(NUMERODEREGISTROS);
-    printf("\nDesordenado gerado!");
-
-    FILE* arqCre = fopen("arqCre.bin", "rb");
-    FILE* arqDec = fopen("arqDec.bin", "rb");
-    FILE* arqDes = fopen("arqDes.bin", "rb");
-
-    Registro* itensTeste = malloc(2000 * sizeof(Registro));
-
-    fread(itensTeste, sizeof(Registro), 2000, arqCre);
-    fread(itensTeste, sizeof(Registro), 2000, arqDec);
-    fread(itensTeste, sizeof(Registro), 2000, arqDes);
-    
-    free(itensTeste);
-    fclose(arqCre);
-    fclose(arqDec);
-    fclose(arqDes);
+        printf("\nGerando decrescente ...");
+        gerarArquivoDecrescente(NUMERODEREGISTROS);
+        printf("\nDecrescente gerado!");
+    }
+    if(entrada.situacaoDoArquivo == 3 && comando != 1);
+    {
+        printf("\nGerando desordenado ...");
+        gerarArquivoDesordenado(entrada.quantidadeDeRegistros);
+        printf("\nDesordenado gerado!");
+    }
 }
 
 void gerarArquivoCrescente(int numeroDeRegistros)
 {
     FILE *arq;
-    Registro item;
+    TipoRegistro item;
     srand(time(NULL));
 
     arq = fopen("arqCre.bin", "wb");
@@ -51,7 +52,7 @@ void gerarArquivoCrescente(int numeroDeRegistros)
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[TAMANHOSTRING - 1] = '\0';
-        fwrite(&item, sizeof(Registro), 1, arq);
+        fwrite(&item, sizeof(TipoRegistro), 1, arq);
     }
     fclose(arq);
 }
@@ -60,7 +61,7 @@ void gerarArquivoDecrescente(int numeroDeRegistros)
 {
 
     FILE *arq;
-    Registro item;
+    TipoRegistro item;
     srand(time(NULL));
 
     arq = fopen("arqDec.bin", "wb");
@@ -74,7 +75,7 @@ void gerarArquivoDecrescente(int numeroDeRegistros)
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[TAMANHOSTRING - 1] = '\0';
-        fwrite(&item, sizeof(Registro), 1, arq);
+        fwrite(&item, sizeof(TipoRegistro), 1, arq);
     }
     fclose(arq);
 }
@@ -84,7 +85,7 @@ void gerarArquivoDesordenado(int numeroDeRegistros)
 {
 
     FILE* arq; 
-    Registro item;
+    TipoRegistro item;
     int* chaves = malloc(numeroDeRegistros * sizeof(int));
 
     srand(time(NULL));
@@ -100,7 +101,6 @@ void gerarArquivoDesordenado(int numeroDeRegistros)
             chaves[i] = chaves[j];
             chaves[j] = temp;
         }
-        printf("\n%d", k);
     }
 
     for(int i = 0; i < numeroDeRegistros; i++){
@@ -117,7 +117,7 @@ void gerarArquivoDesordenado(int numeroDeRegistros)
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[TAMANHOSTRING - 1] = '\0';
-        fwrite(&item, sizeof(Registro), 1, arq);
+        fwrite(&item, sizeof(TipoRegistro), 1, arq);
     }
     fclose(arq);
 }

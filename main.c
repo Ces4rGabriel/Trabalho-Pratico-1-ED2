@@ -1,32 +1,28 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "pesquisa.h"
-#include "arv_B.h"
+#include "header.h"
 #include "arv_B_estrela.h"
 
 void analisar(FILE* arq){
     srand(time(NULL));
-    Analis a[20];
-    Analis r;
+    TipoDadosRecolhidos a[20];
+    TipoDadosRecolhidos r;
     int tam;
     //arvB
     tam = 100;
-    r.tempo = 0; r.comparacoes = 0; r.nTransferencias = 0;
+    r.tempoDecorrido = 0; r.numeroDeComparacoes = 0; r.numeroDeAcessos = 0;
 
     for (int i = 0; i < 20; i++){
         arvB_main(rand() % tam, arq, tam, &a[i], 0);
     }
-    //calcular a media de tempo
+    //calcular a media de tempoDecorrido
     for (int i = 0; i < 20; i++){
-        r.tempo += a[i].tempo;
-        r.nTransferencias += a[i].nTransferencias;
-        r.comparacoes += a[i].comparacoes;
+        r.tempoDecorrido += a[i].tempoDecorrido;
+        r.numeroDeAcessos += a[i].numeroDeAcessos;
+        r.numeroDeComparacoes += a[i].numeroDeComparacoes;
     }
     printf("TAMANHO: %d\n", tam);
-    printf("Tempo medio: %.10f\n", r.tempo/20);
-    printf("Comparacoes medio: %d\n", r.comparacoes/20);
-    printf("Transferencias medio: %d\n", r.nTransferencias/20);
+    printf("Tempo medio: %.10f\n", r.tempoDecorrido/20);
+    printf("Comparacoes medio: %d\n", r.numeroDeComparacoes/20);
+    printf("Transferencias medio: %d\n", r.numeroDeAcessos/20);
 
     //PSI
 
@@ -34,7 +30,7 @@ void analisar(FILE* arq){
 
 int main(int argc, char *argv[]){ 
     FILE *arq;
-    Analis a;
+    TipoDadosRecolhidos a;
     int metodo, nRegistros, situacao, chave;
     metodo = nRegistros = situacao = chave = 0;
 

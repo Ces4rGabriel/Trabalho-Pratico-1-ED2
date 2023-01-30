@@ -1,18 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "pesquisa.h"
+#include "header.h"
 
 void pesSeqInd(int chave, FILE* arq, int qtd_limite){
     TipoIndice tabela[MAXTABELA];
-    TipoItem x[ITENSPAGINA];
-    TipoItem item;
+    TipoRegistro x[ITENSPAGINA];
+    TipoRegistro item;
     int cont, cont_limite;
     
     //criar a tabela de indices
     cont = 0; 
-    while(fread(x, sizeof(TipoItem), ITENSPAGINA, arq) > 0 && cont_limite < qtd_limite){ //itenspagina = 1000
+    while(fread(x, sizeof(TipoRegistro), ITENSPAGINA, arq) > 0 && cont_limite < qtd_limite){ //itenspagina = 1000
         tabela[cont].chave = x[0].chave; 
         cont_limite += ITENSPAGINA;
         cont++;
@@ -34,7 +30,7 @@ void pesSeqInd(int chave, FILE* arq, int qtd_limite){
 }
 
 //pesquisa binaria recursiva
-int pesquisaBinaria(TipoItem x[], TipoItem *item, int esq, int dir){
+int pesquisaBinaria(TipoRegistro x[], TipoRegistro *item, int esq, int dir){
     if(dir >= esq){
         int meio = esq + (dir - esq) / 2;
         if(x[meio].chave == item->chave){
@@ -51,8 +47,8 @@ int pesquisaBinaria(TipoItem x[], TipoItem *item, int esq, int dir){
 
 
 //PESQUISA POR ACESSO SEQUENCIAL INDEXADO
-int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_limite){
-    TipoItem pagina[ITENSPAGINA];
+int pesquisa(TipoIndice tabela[], int tam, TipoRegistro* item, FILE *arq, int qtd_limite){
+    TipoRegistro pagina[ITENSPAGINA];
     int i, quantitens;
     long desloc;
     
@@ -75,9 +71,9 @@ int pesquisa(TipoIndice tabela[], int tam, TipoItem* item, FILE *arq, int qtd_li
         }
 
         // ler a pagina
-        desloc = (i - 1) * ITENSPAGINA * sizeof(TipoItem);
+        desloc = (i - 1) * ITENSPAGINA * sizeof(TipoRegistro);
         fseek(arq, desloc, SEEK_SET); //indo pro local do arquivo onde começa a pagina desejada
-        fread(&pagina, sizeof(TipoItem), quantitens, arq); //ler a pagina toda
+        fread(&pagina, sizeof(TipoRegistro), quantitens, arq); //ler a pagina toda
 
         // pesquisa binaria na pagina
         if (pesquisaBinaria(pagina, item, 0, quantitens - 1) != -1)

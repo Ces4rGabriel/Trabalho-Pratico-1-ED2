@@ -3,7 +3,8 @@
 typedef struct{
     double tempo;
     double tempoC;
-    int comparacoes, comparacoesC;
+    int comparacoes;
+    long comparacoesC;
     int nTransferencias;
     int criacao;
 }Analis;

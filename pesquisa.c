@@ -30,15 +30,13 @@ void pesSeqInd(int chave, FILE* arq, int qtd_limite, Analis * analise, int pp){
     clock_t inicio = clock();
     fseek(arq, 0, SEEK_SET);
     if(pesquisa(tabela, cont, &item, arq, qtd_limite, analise)){
-        if(pp == 1)
             printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     }
     else{
-        if(pp == 1)
             printf("\nNao encontrado o item de chave %d\n", item.chave);
     }
     clock_t fim = clock();
-    analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
+    analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC;
 
 }
 

@@ -27,11 +27,9 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
     //pesquisar a chave
     clock_t inicio = clock();
     if(pesquisaArvB(&item, arvore, &a)){
-        if (pp == 1)
             printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     }
     else{
-        if (pp == 1)
             printf("\nNao encontrado o item de chave %d\n", item.chave);
     }
     //limpa a memoria alocada
@@ -39,7 +37,7 @@ void arvB_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
     clock_t fim = clock();
     analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
     analise->comparacoes = a.comparacoes;
-    analise->comparacoesC = a.comparacoesC;    
+    analise->comparacoesC = a.comparacoesC;
 }
 
 //inicializar a arvore

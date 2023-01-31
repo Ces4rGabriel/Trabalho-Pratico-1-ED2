@@ -7,6 +7,7 @@
 
 void analisarPesq(FILE* arq);
 void analisarCriacao(FILE* arq);
+void lerArquivo(int tamanhoDoBloco, FILE* arq);
 
 int main(int argc, char *argv[]){ 
     FILE *arq;
@@ -54,12 +55,41 @@ int main(int argc, char *argv[]){
         arvB_main(chave, arq, nRegistros, &a, printResult);
         break;
     case 4:
-        arvBE_main(chave, arq, nRegistros);
+        arvBE_main(chave, arq, nRegistros, &a, printResult);
     }
-    //analisarPesq(arq);
     //analisarCriacao(arq);
+    //analisarPesq(arq);
+    //imprimir arquivo
+    if(printResult == 1){
+        lerArquivo(sizeof(TipoItem), arq);
+    }
+    
     fclose(arq);
     return 0;
+}
+
+void lerArquivo(int tamanhoDoBloco, FILE* arq)
+{
+    TipoItem item;
+    int tamanhoDoArquivo = 0;
+    fseek(arq, 0, SEEK_END);
+    tamanhoDoArquivo = ftell(arq);
+    rewind(arq);
+
+    int numeroDeBlocos = tamanhoDoArquivo / tamanhoDoBloco;
+    if (tamanhoDoArquivo % tamanhoDoBloco != 0)
+        numeroDeBlocos++;
+
+    for (int i = 0; i < numeroDeBlocos; i++) {
+        int tamanhoDoUltimoBloco = tamanhoDoBloco;
+        if (i == numeroDeBlocos - 1 && tamanhoDoArquivo % tamanhoDoBloco != 0)
+            tamanhoDoUltimoBloco = tamanhoDoArquivo % tamanhoDoBloco;
+
+        fread(&item, sizeof(TipoItem), tamanhoDoUltimoBloco / sizeof(TipoItem), arq);
+        for (int j = 0; j < tamanhoDoUltimoBloco / sizeof(TipoItem); j++) {
+            printf("Chave: %d, Dado1: %ld, Dado2: %s\n", item.chave, item.dado1, item.dado2);
+        }
+    }
 }
 
 
@@ -113,8 +143,8 @@ void analisarCriacao(FILE* arq){
         r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
     }
     fclose(arq);
-/*
-   printf("\CRIAÇÃO\n");
+
+   printf("CRIAÇÃO\n");
    fopen("arq_random.bin", "rb");
     //random
     for (int j = 0; j < 20; j++){
@@ -133,7 +163,7 @@ void analisarCriacao(FILE* arq){
     printf("    Transferencias medio: %d\n", r.nTransferencias/20);
     r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
     //fclose(arq);
-    */
+
     //PSI
     fopen("arq_crescente.bin", "rb");
     printf("\nPESQUISA SEQUENCIAL INDEXADA\n");
@@ -153,7 +183,6 @@ void analisarCriacao(FILE* arq){
         printf("    Transferencias medio: %d\n", r.nTransferencias/20);
         r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
     }
-
 }
 
 void analisarPesq(FILE* arq){
@@ -162,7 +191,7 @@ void analisarPesq(FILE* arq){
     int tam[5] = {100, 200, 20000, 200000, 2000000};
     int chave[20] = {1 , 3 ,5 , 9, 10, 20, 27,35, 40, 43, 55, 65, 68, 70, 85, 89, 91, 93, 98, 101};
     int mult[5] = {1, 2, 20, 2000, 20000};
-    
+
     //arvB
     printf("Crescente\n");
     printf("__ARVORE B__\n");
@@ -209,30 +238,30 @@ void analisarPesq(FILE* arq){
         r.tempo = 0; r.comparacoes = 1; r.nTransferencias = 0;
     }
     fclose(arq);
-    /*
     //random
+    r.comparacoes = 0; r.tempo = 0;
     fclose(arq);
     fopen("arq_random.bin", "rb");
     printf("\nPESQUISA\n");
     for (int j = 0; j < 20; j++){
-        arvB_main(chave[j] * 20000, arq, 2000000, &a[j], 0);
+        arvB_main(chave[j] * 1, arq, 100, &a[j], 0);
     }
     //calcular a media de tempo
     for (int j = 0; j < 20; j++){
-        r.tempoC += a[j].tempoC;
-        r.nTransferencias += a[j].nTransferencias;
-        r.comparacoesC += a[j].comparacoesC;
+        r.tempo += a[j].tempo;
+        //r.nTransferencias += a[j].nTransferencias;
+        r.comparacoes += a[j].comparacoes;
     }
 
-    printf("TAMANHO: %d\n", 2000000);
-    printf("Tempo medio: %.10f\n", r.tempoC/20);
-    printf("  Comparacoes medio: %ld\n", r.comparacoesC/20);
+    printf("TAMANHO: %d\n", 100);
+    printf("Tempo medio: %.10f\n", r.tempo/20);
+    printf("  Comparacoes medio: %d\n", r.comparacoes/20);
     printf("    Transferencias medio: %d\n", r.nTransferencias/20);
-    r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    r.tempo = 0; r.comparacoes = 0;
     //fclose(arq);
-    */
+
     //PSI
-    fopen("arq_crescente.bin", "rb")
+    fopen("arq_crescente.bin", "rb");
     printf("\nPESQUISA SEQUENCIAL INDEXADA\n");
     for(int i = 0; i < 5; i++){
         for (int j = 0; j < 20; j++){
@@ -249,5 +278,6 @@ void analisarPesq(FILE* arq){
         printf("  Comparacoes medio: %d\n", r.comparacoes/20);
         printf("    Transferencias medio: %d\n", r.nTransferencias/20);
         r.tempo = 0; r.comparacoes = 1; r.nTransferencias = 0;
-    } 
+    }
+
 }

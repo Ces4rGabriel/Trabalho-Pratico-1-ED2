@@ -4,6 +4,9 @@
 #include "pesquisa.h"
 #include "arv_B.h"
 #include "arv_B_estrela.h"
+#include "header.h"
+
+
 
 void analisarPesq(FILE* arq);
 void analisarCriacao(FILE* arq);
@@ -27,22 +30,25 @@ int main(int argc, char *argv[]){
         printResult = 1;
 
     //abrindo arquivo
-    switch (situacao)
+    if(metodo != 2)
     {
-    case 1:
-        arq = fopen("arq_crescente.bin", "rb");
-        break;
-    case 2:
-        arq = fopen("arq_decrescente.bin", "rb");
-        break;
+        switch (situacao)
+        {
+        case 1:
+            arq = fopen("arq_crescente.bin", "rb");
+            break;
+        case 2:
+            arq = fopen("arq_decrescente.bin", "rb");
+            break;
 
-    case 3:
-        arq = fopen("arq_random.bin", "rb");
-        break;
-    }
-    if(arq == NULL){
-        printf("Erro ao abrir o arquivo\n");
-        return 0;
+        case 3:
+            arq = fopen("arq_random.bin", "rb");
+            break;
+        }
+        if(arq == NULL){
+            printf("Erro ao abrir o arquivo\n");
+            return 0;
+        }
     }
     //chamando a função de pesquisa
     
@@ -50,6 +56,28 @@ int main(int argc, char *argv[]){
     {
     case 1:
         pesSeqInd(chave, arq, nRegistros, &a, printResult);
+        break;
+    case 2:
+        TipoEntradaTerminal entrada;
+        entrada.chaveDesejada = chave;
+        entrada.metodoDePesquisa = metodo;
+        entrada.quantidadeDeRegistros = nRegistros;
+        if(nRegistros > 1000000)
+        {
+            printf("\nAtencao, esse metodo vai trabalhar com apenas 1.000.000 de registros, pois foi o maximo que consegui gerar no meu computador.");
+            printf("\nPorem, se existir um arquivo convertido para arvore com 2.000.000 de registros ja gerados, funcionara normalmente");
+            printf("\nEm outras palavras, tenha certeza que existe um arquivo ja convertido com 2.000.000 de entrada, caso contrario, passe 1.000.000 como parametro");
+            printf("\nIMPORTANTE, CASO 2.000.000 SEJA PASSADO COMO PARAMETRO, A LINHA DE CODIGO '#define NUMERODEREGISTROS 1000000' DENTRO DE 'header.h' DEVE SER ALTERADA PARA '#define NUMERODEREGISTROS 2000000'. ISSO EH NECESSARIO APENAS PARA A ARVORE BINARIA");
+        }
+        entrada.situacaoDoArquivo = situacao;
+        entrada.argOpcional = printResult;
+        TipoDadosRecolhidos* dadosPesquisa = malloc(sizeof(TipoDadosRecolhidos));
+
+        chamadaConvercao(entrada, dadosPesquisa);
+        buscaArvoreBinariaMain(entrada, dadosPesquisa);
+        
+        free(dadosPesquisa);
+        return 0;
         break;
     case 3:
         arvB_main(chave, arq, nRegistros, &a, printResult);

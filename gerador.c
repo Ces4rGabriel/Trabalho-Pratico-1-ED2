@@ -7,10 +7,11 @@ void geradorMain(TipoEntradaTerminal entrada)
     printf("Caso voce tenha selecionado a situacao de arquivo 3, EH NECESSARIO GERAR UM ARQUIVO DO TAMANHO DA ENTRADA PARA A BUSCA EM ARQUIVO DESORDENADO! Isso ocorrera automaticamente.\n");
     printf("Para gerar um arquivo desordenado de 2.000.000 de registros, passe esse argumento no terminal com situacao 3\n");
     printf("Se voce nao quer recriar o arquivo desordenado, digite -1 (Caso voce tenha alterado a quantidade de registros e utilize esse comando, o programa nao funcionara corretamente)\n");
-    printf("Para gerar as outras 2 situacoes, crescente e decrescente, de arquivos com 2.000.000 de registros digite 1\n");
+    printf("Para gerar as outras 2 situacoes, crescente e decrescente, de arquivos com 2.000.000 de registros digite 1 (Nao ocorrera caso a situacao do arquivo passada no terminal seja igual a 3)\n");
     printf("\nComando: ");
-    scanf("%d", &comando);
-    if(comando == 1)
+    //scanf("%d", &comando);
+    comando = -1;
+    if(comando == 1 && entrada.situacaoDoArquivo != 3)
     {
         printf("\nGerando crescente ...");
         gerarArquivoCrescente(NUMERODEREGISTROS);
@@ -31,7 +32,7 @@ void geradorMain(TipoEntradaTerminal entrada)
 void gerarArquivoCrescente(int numeroDeRegistros)
 {
     FILE *arq;
-    TipoRegistro item;
+    TipoRegistroNormal item;
     srand(time(NULL));
 
     arq = fopen("arqCre.bin", "wb");
@@ -44,7 +45,7 @@ void gerarArquivoCrescente(int numeroDeRegistros)
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[TAMANHOSTRING - 1] = '\0';
-        fwrite(&item, sizeof(TipoRegistro), 1, arq);
+        fwrite(&item, sizeof(TipoRegistroNormal), 1, arq);
     }
     fclose(arq);
 }
@@ -53,7 +54,7 @@ void gerarArquivoDecrescente(int numeroDeRegistros)
 {
 
     FILE *arq;
-    TipoRegistro item;
+    TipoRegistroNormal item;
     srand(time(NULL));
 
     arq = fopen("arqDec.bin", "wb");
@@ -67,7 +68,7 @@ void gerarArquivoDecrescente(int numeroDeRegistros)
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[TAMANHOSTRING - 1] = '\0';
-        fwrite(&item, sizeof(TipoRegistro), 1, arq);
+        fwrite(&item, sizeof(TipoRegistroNormal), 1, arq);
     }
     fclose(arq);
 }
@@ -77,7 +78,7 @@ void gerarArquivoDesordenado(int numeroDeRegistros)
 {
 
     FILE* arq; 
-    TipoRegistro item;
+    TipoRegistroNormal item;
     int* chaves = malloc(numeroDeRegistros * sizeof(int));
 
     srand(time(NULL));
@@ -109,7 +110,7 @@ void gerarArquivoDesordenado(int numeroDeRegistros)
             item.dado2[j] = rand()%26 + 65;
         }
         item.dado2[TAMANHOSTRING - 1] = '\0';
-        fwrite(&item, sizeof(TipoRegistro), 1, arq);
+        fwrite(&item, sizeof(TipoRegistroNormal), 1, arq);
     }
     fclose(arq);
 }

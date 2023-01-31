@@ -3,25 +3,32 @@
 #include <stdio.h>
 
 
-short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap){
+short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap, Analis *a){
     int i = 1;
     TipoApontadorBE PageAtual;
     PageAtual = *Ap;
 
     if((*Ap)->Pt == Interna){
-        while(i < PageAtual->UU.U0.ni && x->chave > PageAtual->UU.U0.ri[i-1].chave) i++;
+        while(i < PageAtual->UU.U0.ni && x->chave > PageAtual->UU.U0.ri[i-1].chave){ 
+            i++;
+            a->comparacoes++;
+        }
 
-        if(x->chave <= PageAtual->UU.U0.ri[i-1].chave)
-            pesquisaBEstrela(x, &PageAtual->UU.U0.pi[i-1]);
-        else
-            pesquisaBEstrela(x, &PageAtual->UU.U0.pi[i]);
-
+        if(x->chave <= PageAtual->UU.U0.ri[i-1].chave){
+            a->comparacoes++;
+            pesquisaBEstrela(x, &PageAtual->UU.U0.pi[i-1], a);
+        }
+        else{
+            a->comparacoes++;
+            pesquisaBEstrela(x, &PageAtual->UU.U0.pi[i], a);
+        }
         return 1;
     }
     else{
         i = 1;
 
         while(i <= PageAtual->UU.U1.ne && x->chave > PageAtual->UU.U1.re[i-1].chave){
+            a->comparacoes++;
            // printf("Valor do i %d ", i);
            // printf("valor da chave %d\n", (*Ap)->UU.U1.re[i-1].chave);
             i++;
@@ -29,10 +36,12 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap){
         
         //printf("Comparando a buscada: %d com  a encontrada: %d\n", x->chave, (*Ap)->UU.U1.re[i-1].chave);
         if(x->chave == PageAtual->UU.U1.re[i-1].chave){
+            a->comparacoes++;
             (*x) = PageAtual->UU.U1.re[i-1];
             return 1;
         }
         else {
+            a->comparacoes++;
             //printf("Não achou nada\n");
             return 0;
         }
@@ -40,28 +49,45 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap){
 
 }
 
-void arvBE_main(int chave, FILE *arq, int qtd_limite, int pp){
+void arvBE_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){
     TipoApontadorBE arvore;
     TipoRegistroBE reg;
     TipoRegistroBE item;
     item.chave = chave;
-    InicializaBE(&arvore);
+    Analis a;
+    int cont = 1;
+    a.comparacoes = 0;
+    a.comparacoesC = 0;
 
+
+    clock_t inicioC = clock();
+    InicializaBE(&arvore);
 
     for (int i = 0; i < qtd_limite; i++)
     {
         fread(&reg, sizeof(TipoRegistroBE), 1, arq);
-        InsereNaPagina(&arvore, reg);
+        InsereNaPagina(&arvore, reg, &a);
+        cont++;
     }
 
-   //imprimeExterna(arvore);
+    clock_t fimC = clock();
+    analise->tempoC = (double)(fimC - inicioC) / CLOCKS_PER_SEC; //tempo de criacao
+    analise->nTransferencias = cont;
+    analise->criacao = cont;
 
-    if(pesquisaBEstrela(&item, &arvore)){
+    clock_t inicio = clock();
+    if(pesquisaBEstrela(&item, &arvore, &a)){
         if (pp == 1)
             printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
     }else{
-        printf("\nNao encontrado o item de chave %d\n", item.chave);
+        if (pp == 1)
+            printf("\nNao encontrado o item de chave %d\n", item.chave);
     }
+
+    clock_t fim = clock();
+    analise->tempo = (double)(fim - inicio) / CLOCKS_PER_SEC; 
+    analise->comparacoes = a.comparacoes;
+    analise->comparacoesC = a.comparacoesC; 
 }
 
 void InicializaBE(TipoApontadorBE *arvore){
@@ -69,7 +95,7 @@ void InicializaBE(TipoApontadorBE *arvore){
 }
 
 
-void insereInterna(TipoApontadorBE Ap, TipoChaveBS Chave, TipoApontadorBE ApDir){
+void insereInterna(TipoApontadorBE Ap, TipoChaveBS Chave, TipoApontadorBE ApDir, Analis *a){
     int i;
     i = Ap->UU.U0.ni;
     int TemEspaco;
@@ -94,7 +120,7 @@ void insereInterna(TipoApontadorBE Ap, TipoChaveBS Chave, TipoApontadorBE ApDir)
     Ap->UU.U0.ni++;
 }
 
-void InserenaFolha(TipoRegistroBE reg, TipoApontadorBE Ap) {
+void InserenaFolha(TipoRegistroBE reg, TipoApontadorBE Ap, Analis *a) {
     int i;
     i = Ap->UU.U1.ne;
     int TemEspaco;
@@ -117,7 +143,7 @@ void InserenaFolha(TipoRegistroBE reg, TipoApontadorBE Ap) {
     Ap->UU.U1.ne++;
 }
 
-void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegistroBE *RegRetorno, TipoApontadorBE *ApRetorno) {
+void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegistroBE *RegRetorno, TipoApontadorBE *ApRetorno, Analis *a) {
     long i = 1;
     long j;
     TipoApontadorBE ApTemp;
@@ -129,36 +155,22 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
         (*RegRetorno) = reg;
         (*ApRetorno) = NULL;
 
-        //aloca aptemp
-        /*ApTemp = (TipoPaginaBE *)malloc(sizeof(TipoPaginaBE));
-        ApTemp->Pt = Externa;
-        ApTemp->UU.U1.ne = 1;
-        ApTemp->UU.U1.re[0] = reg;*/
-
-        /*(*ApRetorno) = ApTemp;*/
-
-        //free(ApTemp);
         return;
     }
    
     if(Ap->Pt == Interna){
-        //(*RegRetorno) = reg;
-
-        //if(reg.chave == 100)
-        //printf("CHAVE INSERIDA NA arvInterna %d\n", RegRetorno->chave);
-        //printf("Dado 1 inserido na arvInterna %ld\n", RegRetorno->dado1);
-        //printf("Dado 2 inserido na arvInterna %s\n", RegRetorno->dado2);
-        //printf("NUMERO DE ELEMENTOS NA ARVORE INTERNA %d\n", Ap->UU.U0.ni);
 
         while(i < Ap->UU.U0.ni && reg.chave > Ap->UU.U0.ri[i-1].chave){
+            a->comparacoesC++;
             i++;
         }
 
         if(reg.chave < Ap->UU.U0.ri[i-1].chave){
+            a->comparacoesC++;
             i--;
         }
 
-        bstar_Ins(reg, Ap->UU.U0.pi[i], Cresceu, RegRetorno, ApRetorno);
+        bstar_Ins(reg, Ap->UU.U0.pi[i], Cresceu, RegRetorno, ApRetorno, a);
 
        // printf("Resultado não cresceu %d\n", !(*Cresceu));
         if(!*Cresceu){
@@ -166,8 +178,9 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
         }
 
         if(Ap->UU.U0.ni < MM2){
+            a->comparacoesC++;
             //printf("Entrou aqui 3\n");
-            insereInterna(Ap, RegRetorno->chave, *ApRetorno);
+            insereInterna(Ap, RegRetorno->chave, *ApRetorno, a);
             (*Cresceu) = 0;
             return;
         }
@@ -180,15 +193,15 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
         ApTemp->UU.U0.pi[0] = NULL;
 
         if(i < MM+1){
-            insereInterna(ApTemp, Ap->UU.U0.ri[MM2-1].chave, Ap->UU.U0.pi[MM2]);
+            insereInterna(ApTemp, Ap->UU.U0.ri[MM2-1].chave, Ap->UU.U0.pi[MM2], a);
             Ap->UU.U0.ni--;
-            insereInterna(Ap, RegRetorno->chave, *ApRetorno);
+            insereInterna(Ap, RegRetorno->chave, *ApRetorno, a);
         }else {
-            insereInterna(ApTemp, RegRetorno->chave, *ApRetorno);
+            insereInterna(ApTemp, RegRetorno->chave, *ApRetorno, a);
         }
 
         for(j = MM + 2; j <= MM2; j++){
-            insereInterna(ApTemp, Ap->UU.U0.ri[j-1].chave, Ap->UU.U0.pi[j]);
+            insereInterna(ApTemp, Ap->UU.U0.ri[j-1].chave, Ap->UU.U0.pi[j], a);
         }
 
         Ap->UU.U0.ni = MM;
@@ -201,9 +214,13 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
     else{
         (*RegRetorno)  = reg;
 
-        while(i < Ap->UU.U1.ne && reg.chave > Ap->UU.U1.re[i-1].chave) i++;
+        while(i < Ap->UU.U1.ne && reg.chave > Ap->UU.U1.re[i-1].chave){ 
+            a->comparacoesC++;
+            i++;
+        }
 
         if(reg.chave == Ap->UU.U1.re[i-1].chave && Ap->UU.U1.ne != 0){
+            a->comparacoesC++;
             //printf("Erro: Registro ja esta presente\n");
             (*Cresceu) = 0;
             return;
@@ -214,7 +231,8 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
         }
 
         if(Ap->UU.U1.ne < MM2){
-            InserenaFolha(*RegRetorno, Ap);
+            a->comparacoesC++;
+            InserenaFolha(*RegRetorno, Ap, a);
            (*Cresceu) = 0;
             return;
         }
@@ -229,16 +247,16 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
         //Se não irá ir para a nova página criada
 
         if(i < MM+1){
-            InserenaFolha(Ap->UU.U1.re[MM2-1], ApTemp);
+            InserenaFolha(Ap->UU.U1.re[MM2-1], ApTemp, a);
             Ap->UU.U1.ne--;
-            InserenaFolha(*RegRetorno, Ap);
+            InserenaFolha(*RegRetorno, Ap, a);
         }else {
-            InserenaFolha(*RegRetorno, ApTemp);
+            InserenaFolha(*RegRetorno, ApTemp, a);
         }
 
 
         for(j = MM+2; j <= MM2; j++){
-            InserenaFolha(Ap->UU.U1.re[j-1], ApTemp);
+            InserenaFolha(Ap->UU.U1.re[j-1], ApTemp, a);
         }
 
         Ap->UU.U1.ne = MM + 1;
@@ -250,7 +268,7 @@ void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegis
 }
 
 
-void InsereNaPagina(TipoApontadorBE *Ap, TipoRegistroBE Reg) {
+void InsereNaPagina(TipoApontadorBE *Ap, TipoRegistroBE Reg, Analis *a) {
     TipoPaginaBE *ApTemp;
     TipoPaginaBE *apRetorno;
     short cresceu;
@@ -265,7 +283,7 @@ void InsereNaPagina(TipoApontadorBE *Ap, TipoRegistroBE Reg) {
         *Ap = ApTemp;
     }
 
-    bstar_Ins(Reg, *Ap, &cresceu, &RegRetorno, &apRetorno);
+    bstar_Ins(Reg, *Ap, &cresceu, &RegRetorno, &apRetorno, a);
 
     if(cresceu){
         ApTemp = (TipoPaginaBE*)malloc(sizeof(TipoPaginaBE));

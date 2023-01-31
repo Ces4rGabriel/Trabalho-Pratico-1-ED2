@@ -3,6 +3,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include "analise.h"
+#include <time.h>
 
 #define MM 2
 #define MM2 2*MM
@@ -37,16 +39,13 @@ typedef struct TipoPaginaBE {
     }UU;
 } TipoPaginaBE;
 
-short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap);
-void arvBE_main(int chave, FILE *arq, int qtd_limite, int pp);
+short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap, Analis *analise);
+void arvBE_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp);
 void InicializaBE(TipoApontadorBE *arvore);
-void bstar_Insere(TipoRegistroBE reg, TipoApontadorBE *Ap);
-void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegistroBE* RegRetorno, TipoApontadorBE *ApRetorno);
-void InsereNaPagina(TipoApontadorBE *Ap, TipoRegistroBE Reg);
-void escreverValor(TipoApontadorBE *Ap);
-void bstar_Imprime(TipoApontadorBE Ap);
-void InserenaFolha(TipoRegistroBE reg, TipoApontadorBE Ap);
-//void Imprime(TipoApontadorBE arvore);
+void bstar_Insere(TipoRegistroBE reg, TipoApontadorBE *Ap, Analis *analise);
+void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegistroBE* RegRetorno, TipoApontadorBE *ApRetorno, Analis *analise);
+void InsereNaPagina(TipoApontadorBE *Ap, TipoRegistroBE Reg, Analis *analise);
+void InserenaFolha(TipoRegistroBE reg, TipoApontadorBE Ap, Analis *analise);
 void imprimeExterna(TipoApontadorBE arv);
 
 #endif

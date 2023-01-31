@@ -183,6 +183,73 @@ void analisarCriacao(FILE* arq){
         printf("    Transferencias medio: %d\n", r.nTransferencias/20);
         r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
     }
+
+    //ArvBEstrela
+    printf("\nARVORE B ESTRELA\n");
+    printf("\nCrescente\n");
+    arq = fopen("arq_crescente.bin", "rb");
+
+        for(int i = 0; i < 5; i++){
+        for (int j = 0; j < 20; j++){
+            arvBE_main(chave[j] * mult[i], arq, tam[i], &a[j], 0);
+        }
+        //calcular a media de tempo
+        for (int j = 0; j < 20; j++){
+            r.tempoC += a[j].tempoC;
+            r.nTransferencias += a[j].nTransferencias;
+            r.comparacoesC += a[j].comparacoesC;
+        }
+        printf("TAMANHO: -[%d]-\n", tam[i]);
+        printf("Tempo medio: %.10f\n", r.tempoC/20);
+        printf("  Comparacoes medio: %ld\n", r.comparacoesC/20);
+        printf("    Transferencias medio: %d\n", r.nTransferencias/20);
+        r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    }
+
+    fclose(arq);
+
+    //Decrescente
+    printf("\nDecrescente\n");
+    arq = fopen("arq_decrescente.bin", "rb");
+    for(int i = 0; i < 5; i++){
+
+        for (int j = 0; j < 20; j++){
+            arvBE_main(chave[j] * mult[i], arq, tam[i], &a[j], 0);
+        }
+        //calcular a media de tempo
+        for (int j = 0; j < 20; j++){
+            r.tempoC += a[j].tempoC;
+            r.nTransferencias += a[j].nTransferencias;
+            r.comparacoesC += a[j].comparacoesC;
+        }
+
+        printf("TAMANHO: %d\n", tam[i]);
+        printf("Tempo medio: %.10f\n", r.tempoC/20);
+        printf("  Comparacoes medio: %ld\n", r.comparacoesC/20);
+        printf("    Transferencias medio: %d\n", r.nTransferencias/20);
+        r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    }
+    fclose(arq);
+
+    printf("CRIAÇÃO\n");
+    arq = fopen("arq_random.bin", "rb");
+    //random
+    for (int j = 0; j < 20; j++){
+        arvBE_main(chave[j] * 20000, arq, 2000000, &a[j], 0);
+    }
+    //calcular a media de tempo
+    for (int j = 0; j < 20; j++){
+        r.tempoC += a[j].tempoC;
+        r.nTransferencias += a[j].nTransferencias;
+        r.comparacoesC += a[j].comparacoesC;
+    }
+
+    printf("TAMANHO: %d\n", 200000);
+    printf("Tempo medio: %.10f\n", r.tempoC/20);
+    printf("  Comparacoes medio: %ld\n", r.comparacoesC/20);
+    printf("    Transferencias medio: %d\n", r.nTransferencias/20);
+    r.tempoC = 0; r.nTransferencias = 0; r.comparacoesC = 0;
+    fclose(arq);
 }
 
 void analisarPesq(FILE* arq){

@@ -13,8 +13,7 @@ void chamadaConvercao(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dadosPes
     //Caso a situacao nao seja a 3. Serve para a primeira inicializacao do programa e para gerar os primeiros documentos convertidos para arvore binaria caso nao exista
     if(entrada.situacaoDoArquivo != 3){
         printf("\nDeseja converter arqCre.bin (Arquivo crescente) para um arquivo em forma de arvore binaria (gera o arquivo arqCreArvBin.bin)? \n(1 - sim/0 - não) ");
-        //scanf("%d", &checagem);
-        checagem = 0;
+        scanf("%d", &checagem);
         if(checagem != 0)
         {
             arq = fopen("arqCre.bin","rb");
@@ -26,8 +25,7 @@ void chamadaConvercao(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dadosPes
             fclose(arqAvrEscrita);
         }
         printf("\nDeseja converter arqDec.bin (Arquivo decrescente) para um arquivo em forma de arvore binaria (gera o arquivo arqDecArvBin.bin)? \n(1 - sim/0 - não) ");
-        //scanf("%d", &checagem);
-        checagem = 0;
+        scanf("%d", &checagem);
         if(checagem != 0)
         {
             arq = fopen("arqDec.bin","rb");
@@ -42,8 +40,7 @@ void chamadaConvercao(TipoEntradaTerminal entrada, TipoDadosRecolhidos* dadosPes
     //Caso a situacao seja 3, nao ha necessidade de perguntar e gerar os outros 2 arquivos
     else if(entrada.situacaoDoArquivo == 3){
         printf("\nDeseja converter arqDes.bin (Arquivo crescente) para um arquivo em forma de arvore binaria (gera o arquivo arqDesArvBin.bin)? \n(1 - sim/0 - não) ");
-        //scanf("%d", &checagem);
-        checagem = 0;
+        scanf("%d", &checagem);
         if(checagem != 0)
         {
             arq = fopen("arqDes.bin","rb");

@@ -22,7 +22,7 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap, Analis *a){
             a->comparacoes++;
             pesquisaBEstrela(x, &PageAtual->UU.U0.pi[i], a);
         }
-        return 1;
+        return 0;
     }
     else{
         i = 1;
@@ -34,10 +34,12 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap, Analis *a){
             i++;
         }
         
-        //printf("Comparando a buscada: %d com  a encontrada: %d\n", x->chave, (*Ap)->UU.U1.re[i-1].chave);
+        
         if(x->chave == PageAtual->UU.U1.re[i-1].chave){
-            a->comparacoes++;
+            printf("Comparando a buscada: %d com  a encontrada: %d\n", x->chave, (*Ap)->UU.U1.re[i-1].chave);
+            
             (*x) = PageAtual->UU.U1.re[i-1];
+            a->comparacoes++;
             return 1;
         }
         else {
@@ -46,7 +48,7 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap, Analis *a){
             return 0;
         }
     }
-
+    return 0;
 }
 
 void arvBE_main(int chave, FILE *arq, int qtd_limite, Analis *analise, int pp){

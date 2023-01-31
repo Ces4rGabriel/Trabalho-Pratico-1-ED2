@@ -22,7 +22,7 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap, Analis *a){
             a->comparacoes++;
             pesquisaBEstrela(x, &PageAtual->UU.U0.pi[i], a);
         }
-        return 0;
+        return 1;
     }
     else{
         i = 1;
@@ -36,7 +36,6 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap, Analis *a){
         
         
         if(x->chave == PageAtual->UU.U1.re[i-1].chave){
-            printf("Comparando a buscada: %d com  a encontrada: %d\n", x->chave, (*Ap)->UU.U1.re[i-1].chave);
             
             (*x) = PageAtual->UU.U1.re[i-1];
             a->comparacoes++;

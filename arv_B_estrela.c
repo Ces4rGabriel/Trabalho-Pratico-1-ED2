@@ -40,7 +40,7 @@ short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap){
 
 }
 
-void arvBE_main(int chave, FILE *arq, int qtd_limite){
+void arvBE_main(int chave, FILE *arq, int qtd_limite, int pp){
     TipoApontadorBE arvore;
     TipoRegistroBE reg;
     TipoRegistroBE item;
@@ -56,11 +56,12 @@ void arvBE_main(int chave, FILE *arq, int qtd_limite){
 
    //imprimeExterna(arvore);
 
-    if(pesquisaBEstrela(&item, &arvore))
-        printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
-    else
+    if(pesquisaBEstrela(&item, &arvore)){
+        if (pp == 1)
+            printf("\nEncontrado o item de chave %d\n registro_1: %ld\n registro_2: %s\n", item.chave, item.dado1,item.dado2);
+    }else{
         printf("\nNao encontrado o item de chave %d\n", item.chave);
-
+    }
 }
 
 void InicializaBE(TipoApontadorBE *arvore){

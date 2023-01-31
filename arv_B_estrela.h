@@ -38,7 +38,7 @@ typedef struct TipoPaginaBE {
 } TipoPaginaBE;
 
 short pesquisaBEstrela(TipoRegistroBE *x, TipoApontadorBE *Ap);
-void arvBE_main(int chave, FILE *arq, int qtd_limite);
+void arvBE_main(int chave, FILE *arq, int qtd_limite, int pp);
 void InicializaBE(TipoApontadorBE *arvore);
 void bstar_Insere(TipoRegistroBE reg, TipoApontadorBE *Ap);
 void bstar_Ins(TipoRegistroBE reg, TipoApontadorBE Ap, short *Cresceu, TipoRegistroBE* RegRetorno, TipoApontadorBE *ApRetorno);
